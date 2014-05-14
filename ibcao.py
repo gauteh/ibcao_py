@@ -6,7 +6,7 @@
 
 from mpl_toolkits.basemap import Basemap
 from pyproj import Proj
-import scipy, scipy.io, numpy as np
+import scipy as sc, scipy.io, scipy.interpolate, numpy as np
 import matplotlib.cm as cm
 
 import os
@@ -67,7 +67,7 @@ class IBCAO:
     self.origin_lon     = 0   # deg
 
     print ("ibcao read, shape:", self.dim)
-    self.ibcao_nc.close ()
+    #self.ibcao_nc.close ()
 
   def Basemap (self):
     m = Basemap ( projection = self.projection,
@@ -80,6 +80,24 @@ class IBCAO:
                   resolution = 'l')
 
     return m
+
+  def get_depth (self, x, y):
+    # input is UPS coordinates
+    mxx = self.ups_x.data
+    myy = self.ups_y.data
+    z   = self.z.data
+
+    from scipy.ndimage import map_coordinates
+
+    print ("ibcao: interpolating..")
+
+    # array/image coordinates
+    xx = np.interp (x, mxx, np.arange(0, len(mxx)))
+    yy = np.interp (y, myy, np.arange(0, len(myy)))
+
+
+    return sc.interpolate.griddata ((mx.ravel(), my.ravel()), z.ravel(), (xx, yy), method = 'nearest')
+
 
   def Colormap (self):
     # load discrete colormap suggested by official IBCAO
@@ -148,7 +166,7 @@ if __name__ == '__main__':
   x, y = b(lons, lats)
 
   cmap = m.Colormap ()
-  plt.pcolormesh (x, y, zz, cmap = cmap)
+  plt.pcolormesh (x, y, zz)
 
   # set up meridians
   meridians = np.arange (0, 360, 10)
