@@ -171,7 +171,7 @@ if __name__ == '__main__':
   x, y = b(lons, lats)
 
   cmap = m.Colormap ()
-  plt.pcolormesh (x, y, zz)
+  plt.pcolormesh (x, y, zz, cmap = cmap)
 
   # set up meridians
   meridians = np.arange (0, 360, 10)
