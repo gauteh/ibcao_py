@@ -34,7 +34,12 @@ class IBCAO:
   the IBCAO is significant).
 
   """
-  ibcao_grid = '/home/gaute/ymse/maps/IBCAO-3rd-Edition/IBCAO_Ver3_RR_2012-03-16.grd'
+
+  # look in current path for grid file, I usually symlink it in here
+  # from somewhere.
+  ibcao_grid_name = 'IBCAO_V3_500m_RR.grd'
+  ibcao_grid = os.path.join(os.path.dirname(os.path.realpath(__file__)), ibcao_grid_name)
+
   ibcao_cpt  = os.path.join (os.path.dirname(os.path.realpath(__file__)), 'ibcao.cpt')
 
   VERSION = '3.0'
@@ -148,7 +153,7 @@ class IBCAO:
 
 
 if __name__ == '__main__':
-  print ("test ibcao class")
+  print ("testing ibcao class")
   import matplotlib.pyplot as plt
   import matplotlib.cm as cm
 
