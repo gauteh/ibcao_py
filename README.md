@@ -1,6 +1,6 @@
 # IBCAO py
 
-Class which sets up the IBCAO (projection and loads file) for use with Matplotlib.
+Class which sets up the [IBCAO](http://www.ngdc.noaa.gov/mgg/bathymetry/arctic/arctic.html) (projection and loads file) for use with Matplotlib.
 
 <img src="http://scipy-central.org/media/scipy_central/images/201403/ibcao.png" />
 
