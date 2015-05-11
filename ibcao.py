@@ -124,24 +124,6 @@ class IBCAO:
 
     return m
 
-  def get_depth (self, x, y):
-    # input is UPS coordinates
-    mxx = self.ups_x.data
-    myy = self.ups_y.data
-    z   = self.z.data
-
-    from scipy.ndimage import map_coordinates
-
-    print ("ibcao: interpolating..")
-
-    # array/image coordinates
-    xx = np.interp (x, mxx, np.arange(0, len(mxx)))
-    yy = np.interp (y, myy, np.arange(0, len(myy)))
-
-
-    return sc.interpolate.griddata ((mx.ravel(), my.ravel()), z.ravel(), (xx, yy), method = 'nearest')
-
-
   def Colormap (self):
     # load discrete colormap suggested by official IBCAO
     # loader based on: http://wiki.scipy.org/Cookbook/Matplotlib/Loading_a_colormap_dynamically
