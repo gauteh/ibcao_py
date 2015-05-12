@@ -125,15 +125,6 @@ class IBCAO:
 
     return m
 
-  def get_depth (self, x, y, _order = 1):
-    from mpl_toolkits.basemap import interp
-
-    x = np.array (x)
-    y = np.array (y)
-
-    return interp (self.z.data.T, self.ups_x.data, self.ups_y.data, x, y, order = _order)
-
-
   def Colormap (self):
     # load discrete colormap suggested by official IBCAO
     # loader based on: http://wiki.scipy.org/Cookbook/Matplotlib/Loading_a_colormap_dynamically and
