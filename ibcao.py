@@ -75,7 +75,6 @@ class IBCAO:
 800	114	97	71	1000	105	105	105
 1000	105	105	105	1500	170	170	170
 1500	170	170	170	5000	200	200	200
-
 """
 
   def __init__ (self, ibcao_grd_file = ibcao_grid):
@@ -110,6 +109,8 @@ class IBCAO:
     self.origin_lon     = 0   # deg
 
     print ("ibcao read, shape:", self.dim)
+
+    # don't close when mmapped: scipy#3630
     #self.ibcao_nc.close ()
 
   def Basemap (self):
@@ -124,18 +125,29 @@ class IBCAO:
 
     return m
 
+  def get_depth (self, x, y, _order = 1):
+    from mpl_toolkits.basemap import interp
+
+    x = np.array (x)
+    y = np.array (y)
+
+    return interp (self.z.data.T, self.ups_x.data, self.ups_y.data, x, y, order = _order)
+
+
   def Colormap (self):
     # load discrete colormap suggested by official IBCAO
-    # loader based on: http://wiki.scipy.org/Cookbook/Matplotlib/Loading_a_colormap_dynamically
+    # loader based on: http://wiki.scipy.org/Cookbook/Matplotlib/Loading_a_colormap_dynamically and
+    # http://stackoverflow.com/questions/26559764/matplotlib-pcolormesh-discrete-colors
 
     cmap = np.empty ((0,4))
     c = 0
 
-    lastgood = None
-
     for l in self.COLORMAP.split("\n"):
+      l = l.strip()
+
       if len(l) == 0 or l[0] == '#':
         continue
+
       ls = np.array([float (v) for v in l.split ()])
 
       if ls.shape[0] < 8:
@@ -143,30 +155,20 @@ class IBCAO:
 
       c += 1
       cmap.resize (c, 4)
-      cmap[c-1,:] = ls[:4] # skip end spec from cpt
-      lastgood    = ls
+      cmap[c-1,:] = ls[:4]
 
-    # add last end spec from cpt
-    c+= 1
+    # add end spec
+    c += 1
     cmap.resize (c, 4)
-    cmap[c-1,:] = lastgood[4:]
+    cmap[c-1,:] = ls[4:]
 
+    # normalize colors
     cmap[:,[1, 2, 3]] = cmap[:,[1, 2, 3]] / 255.
 
-    xn = cmap[:,0]
-    xn = (xn - xn[0])/(xn[-1] - xn[0])
-    cmap[:,0] = xn
+    cmap_out = cm.colors.ListedColormap (cmap[:,1:4], 'ibcao', c)
+    norm     = cm.colors.BoundaryNorm (cmap[:,0], c)
 
-    cmap_dict = { "red"   : list(cmap[:,[0, 1, 1]]),
-                  "green" : list(cmap[:,[0, 2, 2]]),
-                  "blue"  : list(cmap[:,[0, 3, 3]])
-                 }
-
-    cmap_out = cm.colors.LinearSegmentedColormap('ibcao',
-               cmap_dict)
-
-    return cmap_out
-
+    return (cmap_out, norm)
 
 
 if __name__ == '__main__':
@@ -187,8 +189,8 @@ if __name__ == '__main__':
   lons, lats = b.makegrid(dim, dim)
   x, y = b(lons, lats)
 
-  cmap = m.Colormap ()
-  plt.pcolormesh (x, y, zz, cmap = cmap)
+  (cmap, norm) = m.Colormap ()
+  plt.pcolormesh (x, y, zz, cmap = cmap, norm = norm)
 
   # set up meridians
   meridians = np.arange (0, 360, 10)
@@ -199,6 +201,7 @@ if __name__ == '__main__':
   b.drawparallels (parallels, labels = [False, False, True, True])
 
   plt.title ('The International Bathymetric Chart of the Arctic Ocean')
+  plt.colorbar ()
 
   plt.show ()
 

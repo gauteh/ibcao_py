@@ -37,8 +37,8 @@ or in your code do something like:
   lons, lats = b.makegrid(dim, dim)
   x, y = b(lons, lats)
 
-  cmap = m.Colormap ()
-  plt.pcolormesh (x, y, zz, cmap = cmap)
+  (cmap, norm) = m.Colormap ()
+  plt.pcolormesh (x, y, zz, cmap = cmap, norm = norm)
 
   # set up meridians
   meridians = np.arange (0, 360, 10)
@@ -49,6 +49,7 @@ or in your code do something like:
   b.drawparallels (parallels, labels = [False, False, True, True])
 
   plt.title ('The International Bathymetric Chart of the Arctic Ocean')
+  plt.colorbar ()
 
   plt.show ()
 ```
