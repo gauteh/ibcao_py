@@ -188,11 +188,19 @@ if __name__ == '__main__':
   b.drawmeridians (meridians, labels = [True, True, False, False])
 
   # parallels
-  parallels = np.arange (70, 90, 5)
+  parallels = np.arange (65, 90, 5)
   b.drawparallels (parallels, labels = [False, False, True, True])
 
   plt.title ('The International Bathymetric Chart of the Arctic Ocean')
   plt.colorbar ()
+
+  # put labels on the parallels
+  for p in parallels:
+    x, y = b (0, p)
+    plt.text (x, y, str(p))
+
+  x, y = b(0, 90)
+  plt.plot (x, y, 'kx')
 
   plt.show ()
 
