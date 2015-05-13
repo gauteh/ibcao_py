@@ -125,10 +125,19 @@ class IBCAO:
 
     return m
 
+  depth_f = None
   def get_depth (self, x, y, _order):
-    from mpl_toolkits.basemap import interp
+    #from mpl_toolkits.basemap import interp
 
-    return interp (self.z.data, self.ups_x.data, self.ups_y.data, x, y, order = _order)
+    #return interp (self.z.data.T, self.ups_y.data, self.ups_x.data, y, x, order = _order)
+
+    from scipy.interpolate import interp2d
+
+    if self.depth_f is None:
+      print ("setting up interpolation function..")
+      self.depth_f = interp2d (self.ups_x.data, self.ups_y.data, self.z.data, fill_value = np.nan)
+
+    return self.depth_f(x-2904000, y-2904000)
 
   def Colormap (self):
     # load discrete colormap suggested by official IBCAO
@@ -172,6 +181,7 @@ if __name__ == '__main__':
   import matplotlib.pyplot as plt
   import matplotlib.cm as cm
 
+  plt.figure (1); plt.clf()
   m = IBCAO ()
   b = m.Basemap()
 
@@ -208,18 +218,24 @@ if __name__ == '__main__':
   plt.plot (x, y, 'kx')
 
   ## test depth
-  lon = np.linspace (0, 360, 50)
-  lat = np.linspace (80, 90, 50)
+  lon = np.linspace (0, 360, 10)
+  lat = np.linspace (65, 90, 10)
 
-  for la in lat:
-    x, y = b(lon, np.repeat(la, len(lon)))
-    plt.plot (x, y, 'r-')
+  #for la in lat:
+    #x, y = b(lon, np.repeat(la, len(lon)))
+    #plt.plot (x, y, 'rx')
 
-  plt.figure ()
-  x, y = b(lon, lat)
-  xx, yy = np.meshgrid (x, y)
-  dz = m.get_depth (xx, yy, 0)
+  #plt.figure ()
+  lon, lat = np.meshgrid (lon, lat)
+  xx, yy = b(lon, lat)
+  xx = xx.ravel ()
+  yy = yy.ravel ()
+  #dz = m.get_depth (xx, yy, 0)
+
+  plt.plot (xx, yy, 'rx')
+  for x, y in zip(xx, yy):
+    plt.text (x, y, ("%.1f" % m.get_depth(x, y, 0)[0]))
 
 
-  plt.show ()
+  plt.show (False); plt.draw ()
 
