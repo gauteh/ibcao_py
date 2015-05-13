@@ -125,6 +125,11 @@ class IBCAO:
 
     return m
 
+  def get_depth (self, x, y, _order):
+    from mpl_toolkits.basemap import interp
+
+    return interp (self.z.data, self.ups_x.data, self.ups_y.data, x, y, order = _order)
+
   def Colormap (self):
     # load discrete colormap suggested by official IBCAO
     # loader based on: http://wiki.scipy.org/Cookbook/Matplotlib/Loading_a_colormap_dynamically and
@@ -201,6 +206,20 @@ if __name__ == '__main__':
 
   x, y = b(0, 90)
   plt.plot (x, y, 'kx')
+
+  ## test depth
+  lon = np.linspace (0, 360, 50)
+  lat = np.linspace (80, 90, 50)
+
+  for la in lat:
+    x, y = b(lon, np.repeat(la, len(lon)))
+    plt.plot (x, y, 'r-')
+
+  plt.figure ()
+  x, y = b(lon, lat)
+  xx, yy = np.meshgrid (x, y)
+  dz = m.get_depth (xx, yy, 0)
+
 
   plt.show ()
 
