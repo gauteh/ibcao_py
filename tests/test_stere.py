@@ -75,12 +75,58 @@ class StereTest (ut.TestCase):
   def test_make_test_map (self):
     plt.figure ()
 
-    ax = plt.axes (projection = self.i.crs)
+    ax = plt.axes (projection = self.i.projection)
     #ax.set_extents (-self.i.extent, self.i.extent, -self.i.extent, self.i.extent)
-    ax.coastlines ()
+    ax.coastlines ('10m')
+    ax.gridlines ()
+
+    # only plot every 'div' data point
+    div = 10
+    zz = self.i.z.data[::div, ::div]
+
+    dim = zz.shape[0]
+    #lons, lats = b.makegrid(dim, dim)
+    #x, y = b(lons, lats)
+
+    x = np.linspace (-2904000, 2904000, dim)
+    y = np.linspace (-2904000, 2904000, dim)
+
+    (cmap, norm) = self.i.Colormap ()
+    cm = ax.pcolormesh (x, y, zz, cmap = cmap, norm = norm)
+    plt.colorbar (cm)
+
+    ## set up meridians
+    #meridians = np.arange (0, 360, 10)
+    #b.drawmeridians (meridians, labels = [True, True, False, False])
+
+    ## parallels
+    #parallels = np.arange (65, 90, 5)
+    #b.drawparallels (parallels, labels = [False, False, True, True])
+
+    plt.title ('The International Bathymetric Chart of the Arctic Ocean')
+
 
     plt.savefig ('out/test.png')
 
+  def test_coordintes (self):
+    ## test a bunch of coordinates
+    print ("IBCAO: test coordinates")
+
+    #b = self.Basemap ()
+
+    #xin = self.ups_x.data[::10]
+    #yin = self.ups_y.data[::10]
+
+    #xx, yy = np.meshgrid (xin, yin)
+
+    ## make lon, lats
+    #lon, lat = b (xx, yy, inverse = True)
+
+    ## do the inverse
+    #nx, ny = b(lon, lat, inverse = False)
+
+    #np.testing.assert_array_almost_equal (xx, nx)
+    #np.testing.assert_array_almost_equal (yy, ny)
 
 
 

@@ -12,9 +12,12 @@ import cartopy.crs as ccrs
 import os
 import shapely.geometry as sgeom
 
-class NPUPS (ccrs.Projection):
+class IBCAOUPS (ccrs.Projection):
+  _depth_f = None # interpolation function
+
   def __init__ (self, globe = None):
-    self.extent = 2904000
+    # source: IBCAO_V3_README.txt
+    self.extent     = 2904000
     self.resolution = 500 # meters
 
     self.projection     = 'stere'
@@ -25,7 +28,7 @@ class NPUPS (ccrs.Projection):
     self.origin_lat     = 90  # deg N
     self.origin_lon     = 0   # deg
 
-    proj4_params = [('proj', 'stere'), 
+    proj4_params = [('proj', 'stere'),
                     ('lat_ts', self.true_scale),
                     ('lat_0', self.origin_lat),
                     ('lon_0', self.origin_lon),
@@ -33,11 +36,11 @@ class NPUPS (ccrs.Projection):
                     ('x0', -self.extent),
                     ('y0', -self.extent)]
 
-    super(NPUPS, self).__init__(proj4_params, globe=globe)
+    super(IBCAOUPS, self).__init__(proj4_params, globe=globe)
 
     self._x_limits = (-self.extent, self.extent)
     self._y_limits = (-self.extent, self.extent)
-    self._threshold = 1 
+    self._threshold = 1
 
   @property
   def boundary(self):
@@ -62,8 +65,8 @@ class NPUPS (ccrs.Projection):
 
 class IBCAO:
   """
-  A class for setting up a matplotlib.Basemap of the IBCAO. The IBCAO grd
-  file can be retrieved from:
+  A class for setting up a matplotlib / cartopy instance of the IBCAO. The IBCAO
+  grd file can be retrieved from:
 
     http://www.ngdc.noaa.gov/mgg/bathymetry/arctic/ibcaoversion3.html
 
@@ -77,10 +80,10 @@ class IBCAO:
   class has to be updated for new versions of the IBCAO.
 
 
-  The Basemap is set up to use the same projection as the map, UPS (Polar
-  Stereographic) with the WGS84 datum. While working in this projection it is
-  not necessary to transform the IBCAO image (which for the full version of
-  the IBCAO is significant).
+  The plot is set up to use the same projection as the map, Polar
+  Stereographic, as defined in the IBCAO readme with the WGS84 datum. While
+  working in this projection it is not necessary to transform the IBCAO image
+  (which for the full version of the IBCAO is significant).
 
   """
 
@@ -144,27 +147,24 @@ class IBCAO:
     self.z      = ibcao_nc.variables['z']
     self.ups_x  = ibcao_nc.variables['x']
     self.ups_y  = ibcao_nc.variables['y']
+    self.dim    = (self.ups_x.shape[0], self.ups_y.shape[0])
+    print ("ibcao read, shape:", self.dim)
+
+    self.projection = self.get_cartopy ()
 
     self.extent     = 2904000 * 2  # from README, northing and easting
-    self.dim        = (self.ups_x.shape[0], self.ups_y.shape[0])
     self.resolution = 500 # meters
 
-    self.projection     = 'stere'
-    self.datum          = 'WGS84'
-    self.vertical_datum = 'mean sea level'
-    self.true_scale     = 75.0  # deg N
-    self.scale_factor   = 0.982966757777337
-    self.origin_lat     = 90  # deg N
-    self.origin_lon     = 0   # deg
-
-    print ("ibcao read, shape:", self.dim)
+    self.projection_s   = self.projection.projection
+    self.datum          = self.projection.datum
+    self.vertical_datum = self.projection.vertical_datum
+    self.true_scale     = self.projection.true_scale
+    self.scale_factor   = self.projection.scale_factor
+    self.origin_lat     = self.projection.origin_lat
+    self.origin_lon     = self.projection.origin_lon
 
     # don't close when mmapped: scipy#3630
     #self.ibcao_nc.close ()
-
-    #self.basemap = self.get_basemap ()
-
-    self.crs = self.get_cartopy ()
 
   def close (self):
     # make sure you don't close in case mmap is used elsewhere
@@ -172,28 +172,9 @@ class IBCAO:
     self.ibcao_nc.close ()
 
   def get_cartopy (self):
-    #m = ccrs.Stereographic (central_latitude = self.origin_lat,
-                            #central_longitude = self.origin_lon,
-                            #true_scale_latitude = self.true_scale)
-    m = NPUPS()
+    m = IBCAOUPS()
     return m
 
-  def get_basemap (self):
-    m = Basemap ( projection = self.projection,
-                  width      = self.extent,
-                  height     = self.extent,
-                  lon_0      = self.origin_lon,
-                  lat_0      = self.origin_lat,
-                  lat_ts     = self.true_scale,
-                  k_0        = self.scale_factor,
-                  resolution = 'l')
-
-    return m
-
-  def Basemap (self):
-    return self.basemap
-
-  depth_f = None
   def get_depth (self, x, y, _order):
     #from mpl_toolkits.basemap import interp
 
@@ -201,34 +182,11 @@ class IBCAO:
 
     from scipy.interpolate import interp2d
 
-    if self.depth_f is None:
+    if self._depth_f is None:
       print ("setting up interpolation function..")
-      self.depth_f = interp2d (self.ups_x.data, self.ups_y.data, self.z.data, fill_value = np.nan)
+      self._depth_f = interp2d (self.ups_x.data, self.ups_y.data, self.z.data, fill_value = np.nan)
 
-    return self.depth_f(x-2904000, y-2904000)
-
-  def test_coordintes (self):
-    ## test a bunch of coordinates
-    print ("IBCAO: test coordinates")
-
-    b = self.Basemap ()
-
-    xin = self.ups_x.data[::10]
-    yin = self.ups_y.data[::10]
-
-    xx, yy = np.meshgrid (xin, yin)
-
-    # make lon, lats
-    lon, lat = b (xx, yy, inverse = True)
-
-    # do the inverse
-    nx, ny = b(lon, lat, inverse = False)
-
-    np.testing.assert_array_almost_equal (xx, nx)
-    np.testing.assert_array_almost_equal (yy, ny)
-
-
-
+    return self._depth_f(x-2904000, y-2904000)
 
   def Colormap (self):
     # load discrete colormap suggested by official IBCAO
