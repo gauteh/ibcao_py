@@ -4,12 +4,61 @@
 #
 # IBCAO helpers
 
-from mpl_toolkits.basemap import Basemap
 from pyproj import Proj
 import scipy as sc, scipy.io, scipy.interpolate, numpy as np
 import matplotlib.cm as cm
+import cartopy.crs as ccrs
 
 import os
+import shapely.geometry as sgeom
+
+class NPUPS (ccrs.Projection):
+  def __init__ (self, globe = None):
+    self.extent = 2904000
+    self.resolution = 500 # meters
+
+    self.projection     = 'stere'
+    self.datum          = 'WGS84'
+    self.vertical_datum = 'mean sea level'
+    self.true_scale     = 75.0  # deg N
+    self.scale_factor   = 0.982966757777337
+    self.origin_lat     = 90  # deg N
+    self.origin_lon     = 0   # deg
+
+    proj4_params = [('proj', 'stere'), 
+                    ('lat_ts', self.true_scale),
+                    ('lat_0', self.origin_lat),
+                    ('lon_0', self.origin_lon),
+                    ('k_0', self.scale_factor),
+                    ('x0', -self.extent),
+                    ('y0', -self.extent)]
+
+    super(NPUPS, self).__init__(proj4_params, globe=globe)
+
+    self._x_limits = (-self.extent, self.extent)
+    self._y_limits = (-self.extent, self.extent)
+    self._threshold = 1 
+
+  @property
+  def boundary(self):
+      x0, x1 = self.x_limits
+      y0, y1 = self.y_limits
+      return sgeom.LineString([(x0, y0), (x0, y1),
+                               (x1, y1), (x1, y0),
+                               (x0, y0)])
+
+  @property
+  def threshold(self):
+      return self._threshold
+
+  @property
+  def x_limits(self):
+      return self._x_limits
+
+  @property
+  def y_limits(self):
+      return self._y_limits
+
 
 class IBCAO:
   """
@@ -100,7 +149,7 @@ class IBCAO:
     self.dim        = (self.ups_x.shape[0], self.ups_y.shape[0])
     self.resolution = 500 # meters
 
-    self.projection     = 'npstere'
+    self.projection     = 'stere'
     self.datum          = 'WGS84'
     self.vertical_datum = 'mean sea level'
     self.true_scale     = 75.0  # deg N
@@ -113,12 +162,21 @@ class IBCAO:
     # don't close when mmapped: scipy#3630
     #self.ibcao_nc.close ()
 
-    self.basemap = self.get_basemap ()
+    #self.basemap = self.get_basemap ()
+
+    self.crs = self.get_cartopy ()
 
   def close (self):
     # make sure you don't close in case mmap is used elsewhere
     print ("ibcao: closing map.")
     self.ibcao_nc.close ()
+
+  def get_cartopy (self):
+    #m = ccrs.Stereographic (central_latitude = self.origin_lat,
+                            #central_longitude = self.origin_lon,
+                            #true_scale_latitude = self.true_scale)
+    m = NPUPS()
+    return m
 
   def get_basemap (self):
     m = Basemap ( projection = self.projection,
