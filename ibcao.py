@@ -100,7 +100,7 @@ class IBCAO:
     self.dim        = (self.ups_x.shape[0], self.ups_y.shape[0])
     self.resolution = 500 # meters
 
-    self.projection     = 'stere'
+    self.projection     = 'npstere'
     self.datum          = 'WGS84'
     self.vertical_datum = 'mean sea level'
     self.true_scale     = 75.0  # deg N
@@ -113,7 +113,14 @@ class IBCAO:
     # don't close when mmapped: scipy#3630
     #self.ibcao_nc.close ()
 
-  def Basemap (self):
+    self.basemap = self.get_basemap ()
+
+  def close (self):
+    # make sure you don't close in case mmap is used elsewhere
+    print ("ibcao: closing map.")
+    self.ibcao_nc.close ()
+
+  def get_basemap (self):
     m = Basemap ( projection = self.projection,
                   width      = self.extent,
                   height     = self.extent,
@@ -124,6 +131,9 @@ class IBCAO:
                   resolution = 'l')
 
     return m
+
+  def Basemap (self):
+    return self.basemap
 
   depth_f = None
   def get_depth (self, x, y, _order):
@@ -138,6 +148,29 @@ class IBCAO:
       self.depth_f = interp2d (self.ups_x.data, self.ups_y.data, self.z.data, fill_value = np.nan)
 
     return self.depth_f(x-2904000, y-2904000)
+
+  def test_coordintes (self):
+    ## test a bunch of coordinates
+    print ("IBCAO: test coordinates")
+
+    b = self.Basemap ()
+
+    xin = self.ups_x.data[::10]
+    yin = self.ups_y.data[::10]
+
+    xx, yy = np.meshgrid (xin, yin)
+
+    # make lon, lats
+    lon, lat = b (xx, yy, inverse = True)
+
+    # do the inverse
+    nx, ny = b(lon, lat, inverse = False)
+
+    np.testing.assert_array_almost_equal (xx, nx)
+    np.testing.assert_array_almost_equal (yy, ny)
+
+
+
 
   def Colormap (self):
     # load discrete colormap suggested by official IBCAO
@@ -183,6 +216,9 @@ if __name__ == '__main__':
 
   plt.figure (1); plt.clf()
   m = IBCAO ()
+
+  m.test_coordintes ()
+
   b = m.Basemap()
 
   b.drawcoastlines ()
@@ -238,4 +274,6 @@ if __name__ == '__main__':
 
 
   plt.show (False); plt.draw ()
+
+
 
