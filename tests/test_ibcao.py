@@ -11,7 +11,7 @@ import cartopy.crs as ccrs
 import os
 import os.path
 
-class StereTest (ut.TestCase):
+class IbcaoTest (ut.TestCase):
   def setUp (self):
     self.i = IBCAO ()
     if not os.path.exists ('out'):
@@ -42,8 +42,25 @@ class StereTest (ut.TestCase):
 
     return np_stere
 
+  def test_coordintes (self):
+    ll.info ('test grid coordinates')
+
+    xin = self.i.x[::10]
+    yin = self.i.y[::10]
+
+    xx, yy = np.meshgrid (xin, yin)
+
+    ## make lon, lats
+    #lon, lat = b (xx, yy, inverse = True)
+
+    ## do the inverse
+    #nx, ny = b(lon, lat, inverse = False)
+
+    #np.testing.assert_array_almost_equal (xx, nx)
+    #np.testing.assert_array_almost_equal (yy, ny)
+
   def test_np_stere (self):
-    ll.info ("testing np stereographic vs ups")
+    ll.info ("testing np stereographic vs our projection")
     np_stere = self.get_np_stere ()
 
     lon = np.arange (-180, 180, 1)
@@ -110,23 +127,6 @@ class StereTest (ut.TestCase):
 
 
     plt.savefig ('out/test.png')
-
-  def test_coordintes (self):
-    ll.info ('test grid coordinates')
-
-    xin = self.i.x[::10]
-    yin = self.i.y[::10]
-
-    xx, yy = np.meshgrid (xin, yin)
-
-    ## make lon, lats
-    #lon, lat = b (xx, yy, inverse = True)
-
-    ## do the inverse
-    #nx, ny = b(lon, lat, inverse = False)
-
-    #np.testing.assert_array_almost_equal (xx, nx)
-    #np.testing.assert_array_almost_equal (yy, ny)
 
 
 
