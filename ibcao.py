@@ -131,6 +131,9 @@ class IBCAO:
 
   _depth_f  = None
   def interp_depth (self, x, y):
+    return self.map_depth (x, y)
+
+    """
     from scipy.interpolate import RectBivariateSpline
 
     if self._depth_f is None:
@@ -147,13 +150,14 @@ class IBCAO:
     d[y>self.ylim[1]] = np.nan
 
     return d
+    """
 
   def map_depth (self, x, y):
     from scipy.ndimage import map_coordinates
     x = (x + self.extent) / self.resolution
     y = (y + self.extent) / self.resolution
 
-    return map_coordinates (self.z, [x, y], cval = np.nan)
+    return map_coordinates (self.z, [y, x], cval = np.nan)
 
   @property
   def xlim (self):

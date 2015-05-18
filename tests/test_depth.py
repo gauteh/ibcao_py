@@ -139,7 +139,7 @@ class IbcaoDepthTest (ut.TestCase):
     def check_pos (lon, lat, depth, _atol = 0.1, _rtol = 1e-7):
       xy = self.i.projection.transform_point(lon, lat, g)
 
-      d = self.i.interp_depth (xy[0], xy[1])
+      d = self.i.interp_depth (np.array([xy[0]]), np.array([xy[1]]))
       np.testing.assert_allclose (d, depth, atol = _atol, rtol = _rtol)
 
 
@@ -168,7 +168,7 @@ class IbcaoDepthTest (ut.TestCase):
 
     x = x.reshape (shp)
     y = y.reshape (shp)
-    z = z.reshape (shp)
+    z = z.reshape (shp).T
 
     div = 10
 
