@@ -90,6 +90,27 @@ class IbcaoTest (ut.TestCase):
     lright = (self.i.xlim[1], self.i.ylim[0])
     uright = (self.i.xlim[1], self.i.ylim[1])
 
+    # probably from IBCAO v2
+    # https://svn.nersc.no/hycom/browser/MSCPROGS/src/Conf_grid/Code/mod_ibcao.F90?rev=187
+    # 26        ! UL -2902500,2902500 (-135, 53:49:1.4687)
+    # 27	! UR 2902500, 2902500 (135, 53:49:1.4687)
+    # 28	! LL -2902500,-2902500 (-45, 53:49:1.4687)
+    # 29	! LR 2902500, -2902500 (45, 53:49:1.4687)
+
+    eps = 6 # meters
+
+    xy = self.i.projection.transform_point (-135, 53.8166 + 0.00040797, g)
+    np.testing.assert_allclose ((-2902500, 2902500), xy, eps, eps)
+
+    xy = self.i.projection.transform_point (135, 53.8166 + 0.00040797, g)
+    np.testing.assert_allclose ((2902500, 2902500), xy, eps, eps)
+
+    xy = self.i.projection.transform_point (-45, 53.8166 + 0.00040797, g)
+    np.testing.assert_allclose ((-2902500, -2902500), xy, eps, eps)
+
+    xy = self.i.projection.transform_point (45, 53.8166 + 0.00040797, g)
+    np.testing.assert_allclose ((2902500, -2902500), xy, eps, eps)
+
 
   def test_np_stere (self):
     ll.info ("testing np stereographic vs our projection")
