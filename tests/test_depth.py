@@ -30,7 +30,7 @@ class IbcaoDepthTest (ut.TestCase):
 
     xy  = self.i.projection.transform_points (ccrs.Geodetic (), lon, lat)
 
-    d = self.i.get_depth (xy[:,0], xy[:,1])
+    d = self.i.interp_depth (xy[:,0], xy[:,1])
     ll.info ('d=')
     ll.info (d.shape)
 
@@ -56,7 +56,7 @@ class IbcaoDepthTest (ut.TestCase):
 
     z = map_coordinates (self.i.z.T, [x, y], cval = np.nan)
 
-    dz = self.i.get_depth (xy[:,0], xy[:,1])
+    dz = self.i.interp_depth (xy[:,0], xy[:,1])
     ll.info ('dz=')
     ll.info (dz.shape)
 
@@ -82,7 +82,7 @@ class IbcaoDepthTest (ut.TestCase):
     depth_f = interp2d (self.i.x, self.i.y, self.i.z, fill_value = np.nan, kind = 'cubic')
 
     d = depth_f (xy[:,0], xy[:,1])
-    dz = self.i.get_depth (xy[:,0], xy[:,1])
+    dz = self.i.interp_depth (xy[:,0], xy[:,1])
 
     d = d.diagonal ()
 
@@ -118,7 +118,7 @@ class IbcaoDepthTest (ut.TestCase):
     d[y<self.i.ylim[0]] = np.nan
     d[y>self.i.ylim[1]] = np.nan
 
-    dz = self.i.get_depth (xy[:,0], xy[:,1])
+    dz = self.i.interp_depth (xy[:,0], xy[:,1])
 
     plt.figure ()
     plt.plot (lat, d, label = 'rectbivariatespline')
@@ -136,10 +136,23 @@ class IbcaoDepthTest (ut.TestCase):
 
     g = ccrs.Geodetic ()
 
-    # north pole
-    xy = self.i.projection.transform_point(0, 90, g)
+    def check_pos (lon, lat, depth, _atol = 0.1, _rtol = 1e-7):
+      xy = self.i.projection.transform_point(lon, lat, g)
 
-  """
+      d = self.i.interp_depth (xy[0], xy[1])
+      np.testing.assert_allclose (d, depth, atol = _atol, rtol = _rtol)
+
+
+    # north pole
+    check_pos (0, 90, -4261, 50)
+
+    # longyearbyen
+    check_pos (15.651140, 78.222665, 1.7, 7)
+
+    # highest mountain on greenland (Gunnbjørn Fjeld)
+    check_pos (-29.898533, 68.9195, 3694, 400)
+
+
   def test_resample_depth (self):
     ll.info ('testing resampling of depth')
 
@@ -149,12 +162,15 @@ class IbcaoDepthTest (ut.TestCase):
     x = x.ravel ()
     y = y.ravel ()
 
-    z = self.i.get_depth (x, y)
+    #z = self.i.interp_depth (x, y)
+    z = self.i.map_depth (x, y)
     ll.info ('interpolation done')
 
     x = x.reshape (shp)
     y = y.reshape (shp)
     z = z.reshape (shp)
+
+    div = 10
 
     # make new map with resampled grid
     plt.figure ()
@@ -164,12 +180,11 @@ class IbcaoDepthTest (ut.TestCase):
 
     ax.coastlines ('10m')
     # plot every 'div' data point
-    (cmap, norm) = self.Colormap ()
-    cm = ax.pcolormesh (x[::div], y[::div], z[::div, ::div], cmap = cmap, norm = norm)
+    (cmap, norm) = self.i.Colormap ()
+    cm = ax.pcolormesh (self.i.x[::div], self.i.y[::div], z[::div, ::div], cmap = cmap, norm = norm)
     plt.colorbar (cm)
 
     plt.savefig ('out/resampled_map.png')
-  """
 
 
 

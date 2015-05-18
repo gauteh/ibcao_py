@@ -130,14 +130,12 @@ class IBCAO:
     return m
 
   _depth_f  = None
-  def get_depth (self, x, y):
-    from scipy.interpolate import interp2d, RectBivariateSpline
-    from scipy.ndimage import map_coordinates
+  def interp_depth (self, x, y):
+    from scipy.interpolate import RectBivariateSpline
 
     if self._depth_f is None:
       print ("setting up interpolation function..")
-      #self._depth_f = interp2d (self.ups_x.data, self.ups_y.data, self.z.data, fill_value = np.nan)
-      self._depth_f = RectBivariateSpline (self.x, self.y, self.z.T)
+      self._depth_f = RectBivariateSpline (self.x, self.y, self.z)
 
 
     d = self._depth_f.ev(x, y)
@@ -149,6 +147,13 @@ class IBCAO:
     d[y>self.ylim[1]] = np.nan
 
     return d
+
+  def map_depth (self, x, y):
+    from scipy.ndimage import map_coordinates
+    x = (x + self.extent) / self.resolution
+    y = (y + self.extent) / self.resolution
+
+    return map_coordinates (self.z, [x, y], cval = np.nan)
 
   @property
   def xlim (self):
@@ -172,7 +177,7 @@ class IBCAO:
 
   @property
   def grid (self):
-    return np.mgrid[self.xlim[0]:self.xlim[1]:500, self.ylim[0]:self.ylim[1]:500]
+    return np.mgrid[self.xlim[0]:self.xlim[1]:self.resolution, self.ylim[0]:self.ylim[1]:self.resolution]
 
   def Colormap (self):
     # load discrete colormap suggested by official IBCAO
