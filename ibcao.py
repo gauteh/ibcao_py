@@ -207,7 +207,7 @@ class IBCAO:
     ax.set_ylim (*self.ylim)
 
     ax.coastlines ('10m')
-    ax.gridlines ()
+    ax.gridlines (crs = ccrs.Geodetic(), ylocs = np.arange (60, 90, 5))
 
     # plot every 'div' data point
     (cmap, norm) = self.Colormap ()
@@ -224,64 +224,30 @@ if __name__ == '__main__':
   import matplotlib.pyplot as plt
   import matplotlib.cm as cm
 
-  plt.figure (1); plt.clf()
-  m = IBCAO ()
+  i = IBCAO ()
 
-  b = m.Basemap()
+  f = i.template (10) # only plot every 10th data point
 
-  b.drawcoastlines ()
+  # lets put some text along the parallels
+  lat = np.arange (60, 90, 5)
+  lon = np.repeat (0, len(lat))
 
-  # only plot every 'div' data point
-  div = 10
-  zz = m.z.data[::div, ::div]
+  # regular lat, lon projection
+  g = ccrs.Geodetic ()
 
-  dim = zz.shape[0]
-  lons, lats = b.makegrid(dim, dim)
-  x, y = b(lons, lats)
+  for lon, lat in zip (lon, lat):
+    plt.text (lon, lat, str(lat), transform = g)
 
-  (cmap, norm) = m.Colormap ()
-  plt.pcolormesh (x, y, zz, cmap = cmap, norm = norm)
+  # and some along the meridians
+  lon = [-45, 45, 135, -135]
+  lat = np.repeat (70, len(lon))
 
-  # set up meridians
-  meridians = np.arange (0, 360, 10)
-  b.drawmeridians (meridians, labels = [True, True, False, False])
+  for lon, lat in zip (lon, lat):
+    plt.text (lon, lat, str(lon), transform = g)
 
-  # parallels
-  parallels = np.arange (65, 90, 5)
-  b.drawparallels (parallels, labels = [False, False, True, True])
+  # also; the north pole
+  plt.text (0, 90, "NP", transform = g)
 
-  plt.title ('The International Bathymetric Chart of the Arctic Ocean')
-  plt.colorbar ()
-
-  # put labels on the parallels
-  for p in parallels:
-    x, y = b (0, p)
-    plt.text (x, y, str(p))
-
-  x, y = b(0, 90)
-  plt.plot (x, y, 'kx')
-
-  ## test depth
-  lon = np.linspace (0, 360, 10)
-  lat = np.linspace (65, 90, 10)
-
-  #for la in lat:
-    #x, y = b(lon, np.repeat(la, len(lon)))
-    #plt.plot (x, y, 'rx')
-
-  #plt.figure ()
-  lon, lat = np.meshgrid (lon, lat)
-  xx, yy = b(lon, lat)
-  xx = xx.ravel ()
-  yy = yy.ravel ()
-  #dz = m.get_depth (xx, yy, 0)
-
-  plt.plot (xx, yy, 'rx')
-  for x, y in zip(xx, yy):
-    plt.text (x, y, ("%.1f" % m.get_depth(x, y, 0)[0]))
-
-
-  plt.show (False); plt.draw ()
-
+  plt.show ()
 
 
