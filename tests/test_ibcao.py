@@ -42,7 +42,7 @@ class IbcaoTest (ut.TestCase):
 
     return np_stere
 
-  def test_coordintes (self):
+  def test_ibcao_grid (self):
     ll.info ('test grid coordinates')
 
     xin = self.i.x[::10]
@@ -51,6 +51,8 @@ class IbcaoTest (ut.TestCase):
     xx, yy = np.meshgrid (xin, yin)
 
     ## make lon, lats
+    g = ccrs.Geodetic ()
+    gxy = g.transform_points (self.i.projection, xx, yy)
     #lon, lat = b (xx, yy, inverse = True)
 
     ## do the inverse
@@ -58,6 +60,35 @@ class IbcaoTest (ut.TestCase):
 
     #np.testing.assert_array_almost_equal (xx, nx)
     #np.testing.assert_array_almost_equal (yy, ny)
+
+  def test_north_pole (self):
+    ll.info ('test north pole')
+
+    g = ccrs.Geodetic ()
+
+    # north pole
+    lon = np.arange (-180, 180, 1)
+    lat = np.repeat (90, len(lon))
+
+    nx = self.i.projection.transform_points (g, lon, lat)
+
+    np.testing.assert_array_equal (nx[:,0:2], np.zeros ((nx.shape[0], 2)))
+
+    # test inverse conversion
+    lx = g.transform_points (self.i.projection, nx[:,0], nx[:,1])
+    #np.testing.assert_array_equal (lon, lx[:,0]) # not unique
+    np.testing.assert_array_equal (lat, lx[:,1])
+
+  def test_corners (self):
+    ll.info ('test corners')
+
+    g = ccrs.Geodetic ()
+
+    lleft = (self.i.xlim[0], self.i.ylim[0])
+    uleft = (self.i.xlim[0], self.i.ylim[1])
+    lright = (self.i.xlim[1], self.i.ylim[0])
+    uright = (self.i.xlim[1], self.i.ylim[1])
+
 
   def test_np_stere (self):
     ll.info ("testing np stereographic vs our projection")

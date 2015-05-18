@@ -150,8 +150,7 @@ class IBCAO:
     self.dim    = (self.ups_x.shape[0], self.ups_y.shape[0])
     print ("ibcao read, shape:", self.dim)
 
-    self.projection = self.get_cartopy ()
-
+    # source: IBCAO_V3_README.txt
     self.extent     = 2904000  # from README, northing and easting
     self.resolution = 500 # meters
 
@@ -163,6 +162,8 @@ class IBCAO:
     self.origin_lat     = 90  # deg N
     self.origin_lon     = 0   # deg
 
+    self.projection = self.get_cartopy ()
+
     # don't close when mmapped: scipy#3630
     #self.ibcao_nc.close ()
 
@@ -172,19 +173,7 @@ class IBCAO:
     self.ibcao_nc.close ()
 
   def get_cartopy (self):
-    #m = IBCAOUPS()
     # source: IBCAO_V3_README.txt
-    self.extent     = 2904000
-    self.resolution = 500 # meters
-
-    self.projection     = 'stere'
-    self.datum          = 'WGS84'
-    self.vertical_datum = 'mean sea level'
-    self.true_scale     = 75.0  # deg N
-    self.scale_factor   = 0.982966757777337
-    self.origin_lat     = 90  # deg N
-    self.origin_lon     = 0   # deg
-
     m = ccrs.Stereographic (central_latitude = self.origin_lat,
                             central_longitude = self.origin_lon,
                             false_easting   = 0,
