@@ -2,7 +2,7 @@
 #
 # Author: Gaute Hope <gaute.hope@nersc.no> / 2014-02-19
 #
-# IBCAO helpers
+# IBCAO interface
 
 from pyproj import Proj
 import scipy as sc, scipy.io, scipy.interpolate, numpy as np
@@ -144,7 +144,7 @@ class IBCAO:
       raise ValueError ("The IBCAO file specified does not seem to be IBCAO version 3.0")
 
     # load ibcao projection details
-    self.z      = ibcao_nc.variables['z']
+    self._z     = ibcao_nc.variables['z']
     self.ups_x  = ibcao_nc.variables['x']
     self.ups_y  = ibcao_nc.variables['y']
     self.dim    = (self.ups_x.shape[0], self.ups_y.shape[0])
@@ -152,16 +152,16 @@ class IBCAO:
 
     self.projection = self.get_cartopy ()
 
-    self.extent     = 2904000 * 2  # from README, northing and easting
+    self.extent     = 2904000  # from README, northing and easting
     self.resolution = 500 # meters
 
-    self.projection_s   = self.projection.projection
-    self.datum          = self.projection.datum
-    self.vertical_datum = self.projection.vertical_datum
-    self.true_scale     = self.projection.true_scale
-    self.scale_factor   = self.projection.scale_factor
-    self.origin_lat     = self.projection.origin_lat
-    self.origin_lon     = self.projection.origin_lon
+    self.projection_s   = 'stere'
+    self.datum          = 'WGS84'
+    self.vertical_datum = 'mean sea level'
+    self.true_scale     = 75.0  # deg N
+    self.scale_factor   = 0.982966757777337
+    self.origin_lat     = 90  # deg N
+    self.origin_lon     = 0   # deg
 
     # don't close when mmapped: scipy#3630
     #self.ibcao_nc.close ()
@@ -172,7 +172,25 @@ class IBCAO:
     self.ibcao_nc.close ()
 
   def get_cartopy (self):
-    m = IBCAOUPS()
+    #m = IBCAOUPS()
+    # source: IBCAO_V3_README.txt
+    self.extent     = 2904000
+    self.resolution = 500 # meters
+
+    self.projection     = 'stere'
+    self.datum          = 'WGS84'
+    self.vertical_datum = 'mean sea level'
+    self.true_scale     = 75.0  # deg N
+    self.scale_factor   = 0.982966757777337
+    self.origin_lat     = 90  # deg N
+    self.origin_lon     = 0   # deg
+
+    m = ccrs.Stereographic (central_latitude = self.origin_lat,
+                            central_longitude = self.origin_lon,
+                            false_easting   = 0,
+                            false_northing  = 0,
+                            true_scale_latitude = self.true_scale)
+
     return m
 
   def get_depth (self, x, y, _order):
@@ -187,6 +205,26 @@ class IBCAO:
       self._depth_f = interp2d (self.ups_x.data, self.ups_y.data, self.z.data, fill_value = np.nan)
 
     return self._depth_f(x-2904000, y-2904000)
+
+  @property
+  def xlim (self):
+    return (-self.extent, self.extent)
+
+  @property
+  def ylim (self):
+    return (-self.extent, self.extent)
+
+  @property
+  def x (self):
+    return self.ups_x.data
+
+  @property
+  def y (self):
+    return self.ups_y.data
+
+  @property
+  def z (self):
+    return self._z.data
 
   def Colormap (self):
     # load discrete colormap suggested by official IBCAO
@@ -224,6 +262,34 @@ class IBCAO:
 
     return (cmap_out, norm)
 
+  def template (self, res = 10):
+    # set up a template plot
+    import matplotlib.pyplot as plt
+    f = plt.figure ()
+    ax = plt.axes (projection = self.projection)
+    ax.set_xlim (*self.xlim)
+    ax.set_ylim (*self.ylim)
+
+    ax.coastlines ('10m')
+    ax.gridlines ()
+
+    # plot every 'div' data point
+    div = res
+    zz = self.z[::div, ::div]
+    dim = zz.shape[0]
+
+    # make grid
+    x = np.linspace (*self.projection.x_limits, num = dim)
+    y = np.linspace (*self.projection.y_limits, num = dim)
+
+    (cmap, norm) = self.Colormap ()
+    #cm = ax.pcolormesh (x, y, zz, cmap = cmap, norm = norm)
+    #plt.colorbar (cm)
+
+    plt.title ('The International Bathymetric Chart of the Arctic Ocean')
+
+    return f
+
 
 if __name__ == '__main__':
   print ("testing ibcao class")
@@ -232,8 +298,6 @@ if __name__ == '__main__':
 
   plt.figure (1); plt.clf()
   m = IBCAO ()
-
-  m.test_coordintes ()
 
   b = m.Basemap()
 

@@ -6,6 +6,7 @@ from pyproj import Proj
 from ibcao  import *
 
 import matplotlib.pyplot as plt
+import cartopy.crs as ccrs
 
 import os
 import os.path
@@ -34,55 +35,57 @@ class StereTest (ut.TestCase):
         'origin_lat' : self.i.origin_lat,
         'origin_lon' : self.i.origin_lon,
         'scale_factor' : self.i.scale_factor,
-        'x0' : 2904000,
-        'y0' : 2904000
+        'x0' : 0,
+        'y0' : 0
         })
 
 
     return np_stere
 
-
   def test_np_stere (self):
     ll.info ("testing np stereographic vs ups")
     np_stere = self.get_np_stere ()
 
-    #b = self.i.basemap
-
-    lon = np.arange (0, 180, 1)
-    lat = np.arange (60, 90, 1)
+    lon = np.arange (-180, 180, 1)
+    lat = np.arange (80, 90, 1)
 
     llon, llat = np.meshgrid (lon, lat)
     llon = llon.ravel ()
     llat = llat.ravel ()
 
-    #x, y = b (llon, llat)
+    # convert to np_stere
+    geodetic = ccrs.Geodetic ()
+    xy = self.i.projection.transform_points (geodetic, llon, llat)
+    print (xy)
+
+    x = xy[:,0]
+    y = xy[:,1]
 
     nx, ny = np_stere (llon, llat)
 
-    #np.testing.assert_array_equal (x, nx )
+    np.testing.assert_array_equal (x, nx )
+    np.testing.assert_array_equal (y, ny )
 
+  def test_template (self):
+    ll.info ("testing template")
+    f = self.i.template (10)
 
-
-  def test_ups (self):
-    ups = Proj ("""
-      +proj=ups
-      +north
-      """)
-
-  def test_ups_vs_np_stere (self):
-    pass
+    f.savefig ('out/test_template.png')
 
   def test_make_test_map (self):
+    ll.info ("make test map")
     plt.figure ()
 
     ax = plt.axes (projection = self.i.projection)
-    #ax.set_extents (-self.i.extent, self.i.extent, -self.i.extent, self.i.extent)
+    #ax.set_extent ([-self.i.extent, self.i.extent, -self.i.extent, self.i.extent])
+    ax.set_xlim ([-self.i.extent, self.i.extent])
+    ax.set_ylim ([-self.i.extent, self.i.extent])
     ax.coastlines ('10m')
     ax.gridlines ()
 
     # only plot every 'div' data point
     div = 10
-    zz = self.i.z.data[::div, ::div]
+    zz = self.i.z[::div, ::div]
 
     dim = zz.shape[0]
     #lons, lats = b.makegrid(dim, dim)
@@ -92,7 +95,7 @@ class StereTest (ut.TestCase):
     y = np.linspace (-2904000, 2904000, dim)
 
     (cmap, norm) = self.i.Colormap ()
-    cm = ax.pcolormesh (x, y, zz, cmap = cmap, norm = norm)
+    cm = ax.pcolormesh (self.i.x[::div], self.i.y[::div], zz, cmap = cmap, norm = norm)
     plt.colorbar (cm)
 
     ## set up meridians
@@ -109,15 +112,12 @@ class StereTest (ut.TestCase):
     plt.savefig ('out/test.png')
 
   def test_coordintes (self):
-    ## test a bunch of coordinates
-    print ("IBCAO: test coordinates")
+    ll.info ('test grid coordinates')
 
-    #b = self.Basemap ()
+    xin = self.i.x[::10]
+    yin = self.i.y[::10]
 
-    #xin = self.ups_x.data[::10]
-    #yin = self.ups_y.data[::10]
-
-    #xx, yy = np.meshgrid (xin, yin)
+    xx, yy = np.meshgrid (xin, yin)
 
     ## make lon, lats
     #lon, lat = b (xx, yy, inverse = True)
