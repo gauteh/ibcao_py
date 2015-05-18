@@ -129,7 +129,8 @@ class IBCAO:
 
     return m
 
-  def get_depth (self, x, y, _order):
+  _depth_f  = None
+  def get_depth (self, x, y, _order = 1):
     #from mpl_toolkits.basemap import interp
 
     #return interp (self.z.data.T, self.ups_y.data, self.ups_x.data, y, x, order = _order)
