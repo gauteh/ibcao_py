@@ -85,32 +85,80 @@ class IbcaoTest (ut.TestCase):
 
     g = ccrs.Geodetic ()
 
-    lleft = (self.i.xlim[0], self.i.ylim[0])
-    uleft = (self.i.xlim[0], self.i.ylim[1])
-    lright = (self.i.xlim[1], self.i.ylim[0])
-    uright = (self.i.xlim[1], self.i.ylim[1])
 
-    # probably from IBCAO v2
+    # from IBCAO v2 Techinical reference
     # https://svn.nersc.no/hycom/browser/MSCPROGS/src/Conf_grid/Code/mod_ibcao.F90?rev=187
+    # (probably from IBCAO v2)
     # 26        ! UL -2902500,2902500 (-135, 53:49:1.4687)
     # 27	! UR 2902500, 2902500 (135, 53:49:1.4687)
     # 28	! LL -2902500,-2902500 (-45, 53:49:1.4687)
     # 29	! LR 2902500, -2902500 (45, 53:49:1.4687)
 
+    rtol = 1e7
     eps = 6 # meters
+    deps = 0.0001 # degrees
 
     xy = self.i.projection.transform_point (-135, 53.8166 + 0.00040797, g)
-    np.testing.assert_allclose ((-2902500, 2902500), xy, eps, eps)
+    np.testing.assert_allclose ((-2902500, 2902500), xy, rtol, eps)
 
     xy = self.i.projection.transform_point (135, 53.8166 + 0.00040797, g)
-    np.testing.assert_allclose ((2902500, 2902500), xy, eps, eps)
+    np.testing.assert_allclose ((2902500, 2902500), xy, rtol, eps)
 
     xy = self.i.projection.transform_point (-45, 53.8166 + 0.00040797, g)
-    np.testing.assert_allclose ((-2902500, -2902500), xy, eps, eps)
+    np.testing.assert_allclose ((-2902500, -2902500), xy, rtol, eps)
 
     xy = self.i.projection.transform_point (45, 53.8166 + 0.00040797, g)
-    np.testing.assert_allclose ((2902500, -2902500), xy, eps, eps)
+    np.testing.assert_allclose ((2902500, -2902500), xy, rtol, eps)
 
+    # reverse
+    dx = g.transform_point (-2902500, 2902500, self.i.projection)
+    np.testing.assert_allclose ((-135, 53.8166 + 0.00040797), dx, rtol, deps)
+
+    dx = g.transform_point (2902500, 2902500, self.i.projection)
+    np.testing.assert_allclose ((135, 53.8166 + 0.00040797), dx, rtol, deps)
+
+    dx = g.transform_point (-2902500, -2902500, self.i.projection)
+    np.testing.assert_allclose ((-45, 53.8166 + 0.00040797), dx, rtol, deps)
+
+    dx = g.transform_point (2902500, -2902500, self.i.projection)
+    np.testing.assert_allclose ((45, 53.8166 + 0.00040797), dx, rtol, deps)
+
+    lleft = (self.i.xlim[0], self.i.ylim[0])
+    uleft = (self.i.xlim[0], self.i.ylim[1])
+    lright = (self.i.xlim[1], self.i.ylim[0])
+    uright = (self.i.xlim[1], self.i.ylim[1])
+
+    # latitude calculated using this projection, included for regression testing
+    dlleft = (-45, 53.79955358092116)
+    duleft = (-135, 53.79955358092116)
+    dlright = (45, 53.79955358092116)
+    duright = (135, 53.79955358092116)
+
+    # reverse
+    dx = g.transform_point (*lleft, src_crs = self.i.projection)
+    np.testing.assert_allclose (dlleft, dx, rtol, deps)
+
+    dx = g.transform_point (*uleft, src_crs = self.i.projection)
+    np.testing.assert_allclose (duleft, dx, rtol, deps)
+
+    dx = g.transform_point (*lright, src_crs = self.i.projection)
+    np.testing.assert_allclose (dlright, dx, rtol, deps)
+
+    dx = g.transform_point (*uright, src_crs = self.i.projection)
+    np.testing.assert_allclose (duright, dx, rtol, deps)
+
+    # forward
+    xy = self.i.projection.transform_point (*dlleft, src_crs = g)
+    np.testing.assert_allclose (lleft, xy, rtol, eps)
+
+    xy = self.i.projection.transform_point (*duleft, src_crs = g)
+    np.testing.assert_allclose (uleft, xy, rtol, eps)
+
+    xy = self.i.projection.transform_point (*dlright, src_crs = g)
+    np.testing.assert_allclose (lright, xy, rtol, eps)
+
+    xy = self.i.projection.transform_point (*duright, src_crs = g)
+    np.testing.assert_allclose (uright, xy, rtol, eps)
 
   def test_np_stere (self):
     ll.info ("testing np stereographic vs our projection")
