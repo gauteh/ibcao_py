@@ -20,36 +20,32 @@ $ python ibcao.py
 or in your code do something like:
 ```python
   print ("testing ibcao class")
-  from ibcao import *
   import matplotlib.pyplot as plt
   import matplotlib.cm as cm
 
-  m = IBCAO ()
-  b = m.Basemap()
+  i = IBCAO ()
 
-  b.drawcoastlines ()
+  f = i.template (10) # only plot every 10th data point
 
-  # only plot every 'div' data point
-  div = 10
-  zz = m.z.data[::div, ::div]
+  # lets put some text along the parallels
+  lat = np.arange (65, 90, 5)
+  lon = np.repeat (0, len(lat))
 
-  dim = zz.shape[0]
-  lons, lats = b.makegrid(dim, dim)
-  x, y = b(lons, lats)
+  # regular lat, lon projection
+  g = ccrs.Geodetic ()
 
-  (cmap, norm) = m.Colormap ()
-  plt.pcolormesh (x, y, zz, cmap = cmap, norm = norm)
+  for lon, lat in zip (lon, lat):
+    plt.text (lon, lat, str(lat), transform = g)
 
-  # set up meridians
-  meridians = np.arange (0, 360, 10)
-  b.drawmeridians (meridians, labels = [True, True, False, False])
+  # and some along the meridians
+  lon = [-45, 45, 135, -135]
+  lat = np.repeat (70, len(lon))
 
-  # parallels
-  parallels = np.arange (70, 90, 5)
-  b.drawparallels (parallels, labels = [False, False, True, True])
+  for lon, lat in zip (lon, lat):
+    plt.text (lon, lat, str(lon), transform = g)
 
-  plt.title ('The International Bathymetric Chart of the Arctic Ocean')
-  plt.colorbar ()
+  # also; the north pole
+  plt.text (0, 90, "NP", transform = g)
 
   plt.show ()
 ```

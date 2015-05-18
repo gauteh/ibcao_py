@@ -229,7 +229,7 @@ if __name__ == '__main__':
   f = i.template (10) # only plot every 10th data point
 
   # lets put some text along the parallels
-  lat = np.arange (60, 90, 5)
+  lat = np.arange (65, 90, 5)
   lon = np.repeat (0, len(lat))
 
   # regular lat, lon projection
