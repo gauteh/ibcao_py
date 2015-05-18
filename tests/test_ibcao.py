@@ -49,17 +49,18 @@ class IbcaoTest (ut.TestCase):
     yin = self.i.y[::10]
 
     xx, yy = np.meshgrid (xin, yin)
+    xx = xx.ravel ()
+    yy = yy.ravel ()
 
     ## make lon, lats
     g = ccrs.Geodetic ()
     gxy = g.transform_points (self.i.projection, xx, yy)
-    #lon, lat = b (xx, yy, inverse = True)
 
     ## do the inverse
-    #nx, ny = b(lon, lat, inverse = False)
+    xy = self.i.projection.transform_points (g, gxy[:,0], gxy[:,1])
 
-    #np.testing.assert_array_almost_equal (xx, nx)
-    #np.testing.assert_array_almost_equal (yy, ny)
+    np.testing.assert_array_almost_equal (xx, xy[:,0])
+    np.testing.assert_array_almost_equal (yy, xy[:,1])
 
   def test_north_pole (self):
     ll.info ('test north pole')
