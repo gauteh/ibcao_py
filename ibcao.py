@@ -130,18 +130,25 @@ class IBCAO:
     return m
 
   _depth_f  = None
-  def get_depth (self, x, y, _order = 1):
-    #from mpl_toolkits.basemap import interp
-
-    #return interp (self.z.data.T, self.ups_y.data, self.ups_x.data, y, x, order = _order)
-
-    from scipy.interpolate import interp2d
+  def get_depth (self, x, y):
+    from scipy.interpolate import interp2d, RectBivariateSpline
+    from scipy.ndimage import map_coordinates
 
     if self._depth_f is None:
       print ("setting up interpolation function..")
-      self._depth_f = interp2d (self.ups_x.data, self.ups_y.data, self.z.data, fill_value = np.nan)
+      #self._depth_f = interp2d (self.ups_x.data, self.ups_y.data, self.z.data, fill_value = np.nan)
+      self._depth_f = RectBivariateSpline (self.x, self.y, self.z.T)
 
-    return self._depth_f(x, y)
+
+    d = self._depth_f.ev(x, y)
+
+    # catch outliers
+    d[x<self.xlim[0]] = np.nan
+    d[x>self.xlim[1]] = np.nan
+    d[y<self.ylim[0]] = np.nan
+    d[y>self.ylim[1]] = np.nan
+
+    return d
 
   @property
   def xlim (self):
