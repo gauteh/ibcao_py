@@ -140,7 +140,7 @@ class IBCAO:
       print ("setting up interpolation function..")
       self._depth_f = interp2d (self.ups_x.data, self.ups_y.data, self.z.data, fill_value = np.nan)
 
-    return self._depth_f(x-2904000, y-2904000)
+    return self._depth_f(x, y)
 
   @property
   def xlim (self):
@@ -198,7 +198,7 @@ class IBCAO:
 
     return (cmap_out, norm)
 
-  def template (self, res = 10):
+  def template (self, div = 10):
     # set up a template plot
     import matplotlib.pyplot as plt
     f = plt.figure ()
@@ -210,17 +210,9 @@ class IBCAO:
     ax.gridlines ()
 
     # plot every 'div' data point
-    div = res
-    zz = self.z[::div, ::div]
-    dim = zz.shape[0]
-
-    # make grid
-    x = np.linspace (*self.projection.x_limits, num = dim)
-    y = np.linspace (*self.projection.y_limits, num = dim)
-
     (cmap, norm) = self.Colormap ()
-    #cm = ax.pcolormesh (x, y, zz, cmap = cmap, norm = norm)
-    #plt.colorbar (cm)
+    cm = ax.pcolormesh (self.x[::div], self.y[::div], self.z[::div, ::div], cmap = cmap, norm = norm)
+    plt.colorbar (cm)
 
     plt.title ('The International Bathymetric Chart of the Arctic Ocean')
 

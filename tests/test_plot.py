@@ -2,11 +2,11 @@ import common
 import logging as ll
 import unittest as ut
 
-from pyproj import Proj
 from ibcao  import *
 
+import matplotlib
 import matplotlib.pyplot as plt
-import cartopy.crs as ccrs
+matplotlib.use ('Agg')
 
 import os
 import os.path
@@ -43,8 +43,6 @@ class IbcaoPlotTest (ut.TestCase):
     zz = self.i.z[::div, ::div]
 
     dim = zz.shape[0]
-    #lons, lats = b.makegrid(dim, dim)
-    #x, y = b(lons, lats)
 
     x = np.linspace (-2904000, 2904000, dim)
     y = np.linspace (-2904000, 2904000, dim)
@@ -53,18 +51,7 @@ class IbcaoPlotTest (ut.TestCase):
     cm = ax.pcolormesh (self.i.x[::div], self.i.y[::div], zz, cmap = cmap, norm = norm)
     plt.colorbar (cm)
 
-    ## set up meridians
-    #meridians = np.arange (0, 360, 10)
-    #b.drawmeridians (meridians, labels = [True, True, False, False])
-
-    ## parallels
-    #parallels = np.arange (65, 90, 5)
-    #b.drawparallels (parallels, labels = [False, False, True, True])
-
     plt.title ('The International Bathymetric Chart of the Arctic Ocean')
 
-
     plt.savefig ('out/test.png')
-
-
 
