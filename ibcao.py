@@ -162,6 +162,10 @@ class IBCAO:
   def z (self):
     return self._z.data
 
+  @property
+  def grid (self):
+    return np.mgrid[self.xlim[0]:self.xlim[1]:500, self.ylim[0]:self.ylim[1]:500]
+
   def Colormap (self):
     # load discrete colormap suggested by official IBCAO
     # loader based on: http://wiki.scipy.org/Cookbook/Matplotlib/Loading_a_colormap_dynamically and
