@@ -65,7 +65,7 @@ class IbcaoDepthTest (ut.TestCase):
     plt.legend ()
     plt.title ('depth along 0E')
     plt.xlabel ('Latitude')
-    plt.savefig (os.path.join (out, 'depth_along_0E_map_coordinates.png'))
+    plt.savefig (os.path.join (outdir, 'depth_along_0E_map_coordinates.png'))
 
     np.testing.assert_allclose (dz, z, atol = 1)
 
