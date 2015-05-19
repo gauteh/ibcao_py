@@ -1,4 +1,3 @@
-cython
 shapely
 pyshp
 pyproj
