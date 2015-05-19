@@ -152,6 +152,32 @@ class IbcaoDepthTest (ut.TestCase):
     check_pos (-29.898533, 68.9195, 3694, 400)
 
 
+  def test_map_depth_vs_interp_depth (self):
+    ll.info ('testing map_depth vs interp_depth')
+    # make a profile along 0E
+
+    lat = np.linspace (60, 90, 1000)
+    lon = np.repeat (0, len(lat))
+
+    xy  = self.i.projection.transform_points (ccrs.Geodetic (), lon, lat)
+
+    x = xy[:,0]
+    y = xy[:,1]
+
+    md = self.i.map_depth (x, y)
+
+    id = self.i.interp_depth (x, y)
+
+    plt.figure ()
+    plt.plot (lat, md, label = 'map_depth')
+    plt.plot (lat, id, label = 'interp_depth')
+    plt.legend ()
+    plt.title ('depth along 0E')
+    plt.xlabel ('Latitude')
+    plt.savefig (os.path.join (outdir, 'depth_along_0E_map_depth_vs_interp_depth.png'))
+
+    np.testing.assert_allclose (md, id, atol = 1)
+
   def test_resample_depth (self):
     ll.info ('testing resampling of depth')
 
