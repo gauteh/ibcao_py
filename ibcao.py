@@ -131,9 +131,6 @@ class IBCAO:
 
   _depth_f  = None
   def interp_depth (self, x, y):
-    return self.map_depth (x, y)
-
-    """
     from scipy.interpolate import RectBivariateSpline
 
     if self._depth_f is None:
@@ -150,7 +147,6 @@ class IBCAO:
     d[y>self.ylim[1]] = np.nan
 
     return d
-    """
 
   def map_depth (self, x, y):
     # this is faster, use if possible
