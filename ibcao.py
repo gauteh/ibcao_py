@@ -181,7 +181,8 @@ class IBCAO:
 
   @property
   def grid (self):
-    return np.mgrid[self.xlim[0]:self.xlim[1]:self.resolution, self.ylim[0]:self.ylim[1]:self.resolution]
+    y, x = np.mgrid[self.ylim[0]:self.ylim[1]:self.resolution, self.xlim[0]:self.xlim[1]:self.resolution]
+    return (x, y)
 
   def Colormap (self):
     # load discrete colormap suggested by official IBCAO
