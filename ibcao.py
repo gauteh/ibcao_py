@@ -138,7 +138,7 @@ class IBCAO:
       self._depth_f = RectBivariateSpline (self.x, self.y, self.z)
 
 
-    d = self._depth_f.ev(x, y)
+    d = self._depth_f.ev(y, x)
 
     # catch outliers and set to nan
     d[x<self.xlim[0]] = np.nan
