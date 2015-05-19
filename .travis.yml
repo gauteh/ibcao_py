@@ -5,8 +5,7 @@ virtualenv:
   system_site_package: true
 before_install:
   - sudo apt-get update
-  - sudo apt-get install -qq python-numpy python-matplotlib python-scipy
-  - pip install cython
+  - sudo apt-get install -qq python-numpy python-matplotlib python-scipy cython
   - pip install -r requirements.txt
 script:
   - tests/runtests.sh
