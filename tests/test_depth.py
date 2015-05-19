@@ -33,10 +33,7 @@ class IbcaoDepthTest (ut.TestCase):
 
   def test_depths (self):
     ll.info ('calculating depth profile')
-    # make a profile along 0E
-
-    #lat = np.linspace (60, 90, 1000)
-    #lon = np.repeat (0, len(lat))
+    # make a profile
 
     lon, lat = self.get_lon_lat ()
 
@@ -56,8 +53,6 @@ class IbcaoDepthTest (ut.TestCase):
     ll.info ('testing map coordinates')
     # make a profile
 
-    #lat = np.linspace (60, 90, 1000)
-    #lon = np.repeat (0, len(lat))
     lon, lat = self.get_lon_lat (nlat = 100, nlon = 100)
 
     xy  = self.i.projection.transform_points (ccrs.Geodetic (), lon, lat)
@@ -87,8 +82,6 @@ class IbcaoDepthTest (ut.TestCase):
     ll.info ('testing rectbivariatespline')
     from scipy.interpolate import RectBivariateSpline
 
-    #lat = np.linspace (60, 90, 1000)
-    #lon = np.repeat (0, len(lat))
     lon, lat = self.get_lon_lat ()
 
     xy  = self.i.projection.transform_points (ccrs.Geodetic (), lon, lat)
@@ -122,8 +115,6 @@ class IbcaoDepthTest (ut.TestCase):
     ll.info ('testing map_depth vs interp_depth')
     # make a profile
 
-    #lat = np.linspace (60, 90, 1000)
-    #lon = np.repeat (0, len(lat))
     lon, lat = self.get_lon_lat ()
 
     xy  = self.i.projection.transform_points (ccrs.Geodetic (), lon, lat)
@@ -155,7 +146,10 @@ class IbcaoDepthTest (ut.TestCase):
       xy = self.i.projection.transform_point(lon, lat, g)
 
       d = self.i.interp_depth (np.array([xy[0]]), np.array([xy[1]]))
+      z = self.i.map_depth (np.array([xy[0]]), np.array([xy[1]]))
+
       np.testing.assert_allclose (d, depth, atol = _atol, rtol = _rtol)
+      np.testing.assert_allclose (z, depth, atol = _atol, rtol = _rtol)
 
 
     # north pole
