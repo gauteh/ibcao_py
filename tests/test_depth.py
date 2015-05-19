@@ -20,12 +20,25 @@ class IbcaoDepthTest (ut.TestCase):
     self.i.close ()
     del self.i
 
+  def get_lon_lat (self, nlat = 100, nlon = 100):
+    lat = np.linspace (60, 90, 50)
+    lon = np.linspace (-180, 180, 30)
+
+    lat, lon = np.meshgrid (lat, lon)
+    lat = lat.ravel ()
+    lon = lon.ravel ()
+
+    return (lon, lat)
+
+
   def test_depths (self):
-    ll.info ('calculating depth profile along 0E')
+    ll.info ('calculating depth profile')
     # make a profile along 0E
 
-    lat = np.linspace (60, 90, 1000)
-    lon = np.repeat (0, len(lat))
+    #lat = np.linspace (60, 90, 1000)
+    #lon = np.repeat (0, len(lat))
+
+    lon, lat = self.get_lon_lat ()
 
     xy  = self.i.projection.transform_points (ccrs.Geodetic (), lon, lat)
 
@@ -35,16 +48,17 @@ class IbcaoDepthTest (ut.TestCase):
 
     plt.figure ()
     plt.plot (lat, d)
-    plt.title ('depth along 0E')
+    plt.title ('depth along')
     plt.xlabel ('Latitude')
-    plt.savefig (os.path.join(outdir, 'depth_along_0E.png'))
+    plt.savefig (os.path.join(outdir, 'depth.png'))
 
   def test_map_coordinates (self):
     ll.info ('testing map coordinates')
-    # make a profile along 0E
+    # make a profile
 
-    lat = np.linspace (60, 90, 1000)
-    lon = np.repeat (0, len(lat))
+    #lat = np.linspace (60, 90, 1000)
+    #lon = np.repeat (0, len(lat))
+    lon, lat = self.get_lon_lat (nlat = 100, nlon = 100)
 
     xy  = self.i.projection.transform_points (ccrs.Geodetic (), lon, lat)
 
@@ -63,44 +77,19 @@ class IbcaoDepthTest (ut.TestCase):
     plt.plot (lat, z, label = 'map_coordinates')
     plt.plot (lat, dz, label = 'default')
     plt.legend ()
-    plt.title ('depth along 0E')
+    plt.title ('depth')
     plt.xlabel ('Latitude')
-    plt.savefig (os.path.join (outdir, 'depth_along_0E_map_coordinates.png'))
+    plt.savefig (os.path.join (outdir, 'depth_map_coordinates.png'))
 
     np.testing.assert_allclose (dz, z, atol = 1)
-
-  def test_interp2d (self):
-    ll.info ('testing vs interp2d')
-
-    lat = np.linspace (60, 90, 1000)
-    lon = np.repeat (0, len(lat))
-
-    xy  = self.i.projection.transform_points (ccrs.Geodetic (), lon, lat)
-
-    from scipy.interpolate import interp2d
-    depth_f = interp2d (self.i.x, self.i.y, self.i.z, fill_value = np.nan, kind = 'cubic')
-
-    d = depth_f (xy[:,0], xy[:,1])
-    dz = self.i.interp_depth (xy[:,0], xy[:,1])
-
-    d = d.diagonal ()
-
-    plt.figure ()
-    plt.plot (lat, d, label = 'interp2d')
-    plt.plot (lat, dz, label = 'default')
-    plt.legend ()
-    plt.title ('depth along 0E')
-    plt.xlabel ('Latitude')
-    plt.savefig (os.path.join (outdir, 'depth_along_0E_interp2d.png'))
-
-    np.testing.assert_allclose (dz, d, atol = 10)
 
   def test_rect_bivariate_spline (self):
     ll.info ('testing rectbivariatespline')
     from scipy.interpolate import RectBivariateSpline
 
-    lat = np.linspace (60, 90, 1000)
-    lon = np.repeat (0, len(lat))
+    #lat = np.linspace (60, 90, 1000)
+    #lon = np.repeat (0, len(lat))
+    lon, lat = self.get_lon_lat ()
 
     xy  = self.i.projection.transform_points (ccrs.Geodetic (), lon, lat)
 
@@ -123,11 +112,38 @@ class IbcaoDepthTest (ut.TestCase):
     plt.plot (lat, d, label = 'rectbivariatespline')
     plt.plot (lat, dz, label = 'default')
     plt.legend ()
-    plt.title ('depth along 0E rectbivariate')
+    plt.title ('depth rectbivariate')
     plt.xlabel ('Latitude')
-    plt.savefig (os.path.join (outdir, 'depth_along_0E_rectbivariate.png'))
+    plt.savefig (os.path.join (outdir, 'depth_rectbivariate.png'))
 
     np.testing.assert_allclose (dz, d, atol = 1)
+
+  def test_map_depth_vs_interp_depth (self):
+    ll.info ('testing map_depth vs interp_depth')
+    # make a profile
+
+    #lat = np.linspace (60, 90, 1000)
+    #lon = np.repeat (0, len(lat))
+    lon, lat = self.get_lon_lat ()
+
+    xy  = self.i.projection.transform_points (ccrs.Geodetic (), lon, lat)
+
+    x = xy[:,0]
+    y = xy[:,1]
+
+    md = self.i.map_depth (x, y)
+
+    id = self.i.interp_depth (x, y)
+
+    plt.figure ()
+    plt.plot (lat, md, label = 'map_depth')
+    plt.plot (lat, id, label = 'interp_depth')
+    plt.legend ()
+    plt.title ('depth')
+    plt.xlabel ('Latitude')
+    plt.savefig (os.path.join (outdir, 'depth_map_depth_vs_interp_depth.png'))
+
+    np.testing.assert_allclose (md, id, atol = 1)
 
 
   def test_known_positions (self):
@@ -205,31 +221,6 @@ class IbcaoDepthTest (ut.TestCase):
     np.testing.assert_allclose (gmtz, dz, atol = 1)
     np.testing.assert_allclose (gmtz, mz, atol = 1)
 
-  def test_map_depth_vs_interp_depth (self):
-    ll.info ('testing map_depth vs interp_depth')
-    # make a profile along 0E
-
-    lat = np.linspace (60, 90, 1000)
-    lon = np.repeat (0, len(lat))
-
-    xy  = self.i.projection.transform_points (ccrs.Geodetic (), lon, lat)
-
-    x = xy[:,0]
-    y = xy[:,1]
-
-    md = self.i.map_depth (x, y)
-
-    id = self.i.interp_depth (x, y)
-
-    plt.figure ()
-    plt.plot (lat, md, label = 'map_depth')
-    plt.plot (lat, id, label = 'interp_depth')
-    plt.legend ()
-    plt.title ('depth along 0E')
-    plt.xlabel ('Latitude')
-    plt.savefig (os.path.join (outdir, 'depth_along_0E_map_depth_vs_interp_depth.png'))
-
-    np.testing.assert_allclose (md, id, atol = 1)
 
   def test_resample_depth (self):
     ll.info ('testing resampling of depth')
