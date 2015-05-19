@@ -6,10 +6,9 @@ virtualenv:
 before_install:
   - sudo apt-get update
   - sudo apt-get install -qq python-numpy python-matplotlib python-scipy
-   #- pip install -r requirements.txt --use-mirrors
+  - pip install -r requirements.txt --use-mirrors
 script:
-  - if [[ $TRAVIS_PYTHON_VERSION == '2.7' ]]; then python -m unittest discover -v; fi
-  - if [[ $TRAVIS_PYTHON_VERSION == '3.4' ]]; then python -m unittest discover -v; fi
+  - tests/runtests.sh
 notifications:
   email:
     - eg@gaute.vetsj.com
