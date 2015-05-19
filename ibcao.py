@@ -4,11 +4,11 @@
 #
 # IBCAO interface
 
-import os
-from pyproj import Proj
-import scipy as sc, scipy.io, scipy.interpolate, numpy as np
-import matplotlib.cm as cm
-import cartopy.crs as ccrs
+import  os
+from    pyproj import Proj
+import  scipy as sc, scipy.io, scipy.interpolate, numpy as np
+import  matplotlib.cm as cm
+import  cartopy.crs as ccrs
 
 class IBCAO:
   """
@@ -257,7 +257,7 @@ if __name__ == '__main__':
   for lon, lat in zip (lon, lat):
     plt.text (lon, lat, str(lat), transform = g)
 
-  # and some along the meridians
+  # and some text along the meridians
   lon = [-45, 45, 135, -135]
   lat = np.repeat (70, len(lon))
 
