@@ -21,8 +21,8 @@ class IbcaoDepthTest (ut.TestCase):
     del self.i
 
   def get_lon_lat (self, nlat = 100, nlon = 100):
-    lat = np.linspace (60, 90, 50)
-    lon = np.linspace (-180, 180, 30)
+    lat = np.linspace (60, 90, nlat)
+    lon = np.linspace (-180, 180, nlon)
 
     lat, lon = np.meshgrid (lat, lon)
     lat = lat.ravel ()

@@ -173,7 +173,6 @@ class IbcaoProjTest (ut.TestCase):
     # convert to np_stere
     geodetic = ccrs.Geodetic ()
     xy = self.i.projection.transform_points (geodetic, llon, llat)
-    print (xy)
 
     x = xy[:,0]
     y = xy[:,1]
