@@ -1,4 +1,5 @@
 import common
+from common import outdir
 import logging as ll
 import unittest as ut
 
@@ -6,7 +7,6 @@ from ibcao  import *
 
 import matplotlib
 import matplotlib.pyplot as plt
-matplotlib.use ('Agg')
 
 import os
 import os.path
@@ -14,8 +14,6 @@ import os.path
 class IbcaoPlotTest (ut.TestCase):
   def setUp (self):
     self.i = IBCAO ()
-    if not os.path.exists ('out'):
-      os.makedirs ('out')
 
   def tearDown (self):
     self.i.close ()
@@ -25,7 +23,7 @@ class IbcaoPlotTest (ut.TestCase):
     ll.info ("testing template")
     f = self.i.template (10)
 
-    f.savefig ('out/test_template.png')
+    f.savefig (os.path.join (outdir, 'test_template.png'))
 
   def test_make_test_map (self):
     ll.info ("make test map")
@@ -53,5 +51,5 @@ class IbcaoPlotTest (ut.TestCase):
 
     plt.title ('The International Bathymetric Chart of the Arctic Ocean')
 
-    plt.savefig ('out/test.png')
+    plt.savefig (os.path.join (outdir, 'test.png'))
 

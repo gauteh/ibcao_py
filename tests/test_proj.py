@@ -1,4 +1,5 @@
 import common
+from common import outdir
 import logging as ll
 import unittest as ut
 
@@ -14,8 +15,6 @@ import os.path
 class IbcaoProjTest (ut.TestCase):
   def setUp (self):
     self.i = IBCAO ()
-    if not os.path.exists ('out'):
-      os.makedirs ('out')
 
   def tearDown (self):
     self.i.close ()

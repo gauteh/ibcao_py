@@ -1,4 +1,5 @@
 import common
+from common import outdir
 import logging as ll
 import unittest as ut
 
@@ -14,8 +15,6 @@ import os.path
 class IbcaoDepthTest (ut.TestCase):
   def setUp (self):
     self.i = IBCAO ()
-    if not os.path.exists ('out'):
-      os.makedirs ('out')
 
   def tearDown (self):
     self.i.close ()
@@ -38,7 +37,7 @@ class IbcaoDepthTest (ut.TestCase):
     plt.plot (lat, d)
     plt.title ('depth along 0E')
     plt.xlabel ('Latitude')
-    plt.savefig ('out/depth_along_0E.png')
+    plt.savefig (os.path.join(outdir, 'depth_along_0E.png'))
 
   def test_map_coordinates (self):
     ll.info ('testing map coordinates')
@@ -66,7 +65,7 @@ class IbcaoDepthTest (ut.TestCase):
     plt.legend ()
     plt.title ('depth along 0E')
     plt.xlabel ('Latitude')
-    plt.savefig ('out/depth_along_0E_map_coordinates.png')
+    plt.savefig (os.path.join (out, 'depth_along_0E_map_coordinates.png'))
 
     np.testing.assert_allclose (dz, z, atol = 1)
 
@@ -92,7 +91,7 @@ class IbcaoDepthTest (ut.TestCase):
     plt.legend ()
     plt.title ('depth along 0E')
     plt.xlabel ('Latitude')
-    plt.savefig ('out/depth_along_0E_interp2d.png')
+    plt.savefig (os.path.join (outdir, 'depth_along_0E_interp2d.png'))
 
     np.testing.assert_allclose (dz, d, atol = 10)
 
@@ -126,7 +125,7 @@ class IbcaoDepthTest (ut.TestCase):
     plt.legend ()
     plt.title ('depth along 0E rectbivariate')
     plt.xlabel ('Latitude')
-    plt.savefig ('out/depth_along_0E_rectbivariate.png')
+    plt.savefig (os.path.join (outdir, 'depth_along_0E_rectbivariate.png'))
 
     np.testing.assert_allclose (dz, d, atol = 1)
 
@@ -168,7 +167,7 @@ class IbcaoDepthTest (ut.TestCase):
 
     x = x.reshape (shp)
     y = y.reshape (shp)
-    z = z.reshape (shp).T
+    z = z.reshape (shp)
 
     div = 10
 
@@ -184,7 +183,7 @@ class IbcaoDepthTest (ut.TestCase):
     cm = ax.pcolormesh (self.i.x[::div], self.i.y[::div], z[::div, ::div], cmap = cmap, norm = norm)
     plt.colorbar (cm)
 
-    plt.savefig ('out/resampled_map.png')
+    plt.savefig (os.path.join (outdir, 'resampled_map.png'))
 
 
 
