@@ -143,7 +143,7 @@ class IBCAO:
 
     d = self._depth_f.ev(x, y)
 
-    # catch outliers
+    # catch outliers and set to nan
     d[x<self.xlim[0]] = np.nan
     d[x>self.xlim[1]] = np.nan
     d[y<self.ylim[0]] = np.nan
@@ -153,6 +153,7 @@ class IBCAO:
     """
 
   def map_depth (self, x, y):
+    # this is faster, use if possible
     from scipy.ndimage import map_coordinates
     x = (x + self.extent) / self.resolution
     y = (y + self.extent) / self.resolution
