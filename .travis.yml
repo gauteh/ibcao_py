@@ -65,11 +65,10 @@ install:
 
   # Install cartopy
   # ---------------
-  #- python setup.py --quiet install
-  - conda install pip
-    #- conda install cartopy
   - pip install pyproj
   - pip install cartopy
+
+  # Fetching the IBCAO (if not cached)
   - mkdir -p ibcao_download
   - if [ ! -f ibcao_download/IBCAO_V3_500m_RR.grd ]; then
     wget http://www.ngdc.noaa.gov/mgg/bathymetry/arctic/grids/version3_0/IBCAO_V3_500m_RR.grd -O ibcao_download/IBCAO_V3_500m_RR.grd;
