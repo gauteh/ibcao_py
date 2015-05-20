@@ -213,6 +213,10 @@ class IbcaoDepthTest (ut.TestCase):
     plt.xlabel ('Longitude')
     plt.savefig (os.path.join (outdir, 'depth_vs_gmt.png'))
 
+    print (gmtz)
+    print (dz)
+    print (mz)
+
     np.testing.assert_allclose (gmtz, dz, atol = 10)
     np.testing.assert_allclose (gmtz, mz, atol = 10)
 
