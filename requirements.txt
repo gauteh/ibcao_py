@@ -1,5 +1,0 @@
-shapely
-pyshp
-pyproj
-cartopy
-
