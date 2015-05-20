@@ -62,7 +62,9 @@ install:
   # Install cartopy
   # ---------------
   #- python setup.py --quiet install
-  - conda install cartopy
+  - conda install pip
+    #- conda install cartopy
+  - pip install cartopy
 
 script:
   - tests/runtests.sh
