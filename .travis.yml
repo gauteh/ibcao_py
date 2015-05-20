@@ -67,5 +67,7 @@ install:
   - pip install cartopy
 
 script:
+  - export PATH="$HOME/miniconda/bin:$PATH"
+  - source activate test-environment
   - tests/runtests.sh
 
