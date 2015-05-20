@@ -50,94 +50,6 @@ class IbcaoDepthTest (ut.TestCase):
     plt.xlabel ('Latitude')
     plt.savefig (os.path.join(outdir, 'depth.png'))
 
-  def test_map_coordinates (self):
-    ll.info ('testing map coordinates')
-    # make a profile
-
-    lon, lat = self.get_lon_lat (nlat = 100, nlon = 100)
-
-    xy  = self.i.projection.transform_points (ccrs.Geodetic (), lon, lat)
-
-    from scipy.ndimage import map_coordinates
-
-    x = (xy[:,0] + 2904000 ) / 500
-    y = (xy[:,1] + 2904000 ) / 500
-
-    z = map_coordinates (self.i.z.T, [x, y], cval = np.nan)
-
-    dz = self.i.interp_depth (xy[:,0], xy[:,1])
-    ll.info ('dz=')
-    ll.info (dz.shape)
-
-    plt.figure ()
-    plt.plot (lat, z, label = 'map_coordinates')
-    plt.plot (lat, dz, label = 'default')
-    plt.legend ()
-    plt.title ('depth')
-    plt.xlabel ('Latitude')
-    plt.savefig (os.path.join (outdir, 'depth_map_coordinates.png'))
-
-    np.testing.assert_allclose (dz, z, atol = 1)
-
-  def test_rect_bivariate_spline (self):
-    ll.info ('testing rectbivariatespline')
-    from scipy.interpolate import RectBivariateSpline
-
-    lon, lat = self.get_lon_lat ()
-
-    xy  = self.i.projection.transform_points (ccrs.Geodetic (), lon, lat)
-
-    depth_f = RectBivariateSpline (self.i.x, self.i.y, self.i.z.T)
-
-    d = depth_f.ev(xy[:,0], xy[:,1])
-
-    x = xy[:,0]
-    y = xy[:,1]
-
-    # catch outliers
-    d[x<self.i.xlim[0]] = np.nan
-    d[x>self.i.xlim[1]] = np.nan
-    d[y<self.i.ylim[0]] = np.nan
-    d[y>self.i.ylim[1]] = np.nan
-
-    dz = self.i.interp_depth (xy[:,0], xy[:,1])
-
-    plt.figure ()
-    plt.plot (lat, d, label = 'rectbivariatespline')
-    plt.plot (lat, dz, label = 'default')
-    plt.legend ()
-    plt.title ('depth rectbivariate')
-    plt.xlabel ('Latitude')
-    plt.savefig (os.path.join (outdir, 'depth_rectbivariate.png'))
-
-    np.testing.assert_allclose (dz, d, atol = 1)
-
-  def test_map_depth_vs_interp_depth (self):
-    ll.info ('testing map_depth vs interp_depth')
-    # make a profile
-
-    lon, lat = self.get_lon_lat ()
-
-    xy  = self.i.projection.transform_points (ccrs.Geodetic (), lon, lat)
-
-    x = xy[:,0]
-    y = xy[:,1]
-
-    md = self.i.map_depth (x, y)
-
-    id = self.i.interp_depth (x, y)
-
-    plt.figure ()
-    plt.plot (lat, md, label = 'map_depth')
-    plt.plot (lat, id, label = 'interp_depth')
-    plt.legend ()
-    plt.title ('depth')
-    plt.xlabel ('Latitude')
-    plt.savefig (os.path.join (outdir, 'depth_map_depth_vs_interp_depth.png'))
-
-    np.testing.assert_allclose (md, id, atol = 1)
-
-
   def test_known_positions (self):
     ll.info ('testing depth on a few known positions')
 
@@ -213,42 +125,6 @@ class IbcaoDepthTest (ut.TestCase):
     plt.xlabel ('Longitude')
     plt.savefig (os.path.join (outdir, 'depth_vs_gmt.png'))
 
+    # high atol = 22 needed for python 3.4
     np.testing.assert_allclose (gmtz, dz, atol = 22)
     np.testing.assert_allclose (gmtz, mz, atol = 22)
-
-
-  def test_resample_depth (self):
-    ll.info ('testing resampling of depth')
-
-    (x, y) = self.i.grid
-
-    shp = x.shape
-    x = x.ravel ()
-    y = y.ravel ()
-
-    #z = self.i.interp_depth (x, y)
-    z = self.i.map_depth (x, y)
-    ll.info ('interpolation done')
-
-    x = x.reshape (shp)
-    y = y.reshape (shp)
-    z = z.reshape (shp)
-
-    div = 10
-
-    # make new map with resampled grid
-    plt.figure ()
-    ax = plt.axes (projection = self.i.projection)
-    ax.set_xlim (*self.i.xlim)
-    ax.set_ylim (*self.i.ylim)
-
-    ax.coastlines ('10m')
-    # plot every 'div' data point
-    (cmap, norm) = self.i.Colormap ()
-    cm = ax.pcolormesh (self.i.x[::div], self.i.y[::div], z[::div, ::div], cmap = cmap, norm = norm)
-    plt.colorbar (cm)
-
-    plt.savefig (os.path.join (outdir, 'resampled_map.png'))
-
-
-

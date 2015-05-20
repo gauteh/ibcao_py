@@ -78,5 +78,7 @@ install:
 script:
   - tests/runtests.sh -f test_proj
   - tests/runtests.sh -f test_depth
+  - tests/runtests.sh -f test_depth_map
+  - tests/runtests.sh -f test_depth_interp
   - tests/runtests.sh -f test_plot
 

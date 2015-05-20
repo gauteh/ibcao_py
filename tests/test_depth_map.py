@@ -1,0 +1,68 @@
+# encoding: utf-8
+import common
+from common import outdir
+import logging as ll
+import unittest as ut
+
+from ibcao  import *
+import cartopy.crs as ccrs
+
+import matplotlib
+import matplotlib.pyplot as plt
+
+import os
+import os.path
+
+class IbcaoDepthTest (ut.TestCase):
+  def setUp (self):
+    self.i = IBCAO ()
+
+  def tearDown (self):
+    self.i.close ()
+    del self.i
+
+  def get_lon_lat (self, nlat = 100, nlon = 100):
+    lat = np.linspace (60, 90, nlat)
+    lon = np.linspace (-180, 180, nlon)
+
+    lat, lon = np.meshgrid (lat, lon)
+    lat = lat.ravel ()
+    lon = lon.ravel ()
+
+    return (lon, lat)
+
+  def test_resample_depth (self):
+    ll.info ('testing resampling of depth')
+
+    (x, y) = self.i.grid
+
+    shp = x.shape
+    x = x.ravel ()
+    y = y.ravel ()
+
+    #z = self.i.interp_depth (x, y)
+    z = self.i.map_depth (x, y)
+    ll.info ('interpolation done')
+
+    x = x.reshape (shp)
+    y = y.reshape (shp)
+    z = z.reshape (shp)
+
+    div = 10
+
+    # make new map with resampled grid
+    plt.figure ()
+    ax = plt.axes (projection = self.i.projection)
+    ax.set_xlim (*self.i.xlim)
+    ax.set_ylim (*self.i.ylim)
+
+    ax.coastlines ('10m')
+    # plot every 'div' data point
+    (cmap, norm) = self.i.Colormap ()
+    cm = ax.pcolormesh (self.i.x[::div], self.i.y[::div], z[::div, ::div], cmap = cmap, norm = norm)
+    plt.colorbar (cm)
+
+    plt.savefig (os.path.join (outdir, 'resampled_map.png'))
+
+
+
