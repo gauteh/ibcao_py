@@ -68,7 +68,6 @@ install:
   - pip install cartopy
 
 script:
-  - export PATH="$HOME/miniconda/bin:$PATH"
-  - source activate test-environment
+  - wget http://www.ngdc.noaa.gov/mgg/bathymetry/arctic/grids/version3_0/IBCAO_V3_500m_RR.grd
   - tests/runtests.sh
 
