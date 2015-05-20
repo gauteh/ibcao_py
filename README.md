@@ -1,5 +1,4 @@
 # IBCAO py
-[![Build Status](https://travis-ci.org/gauteh/ibcao_py.svg?branch=master)](https://travis-ci.org/gauteh/ibcao_py)
 
 Class which sets up the [IBCAO](http://www.ngdc.noaa.gov/mgg/bathymetry/arctic/arctic.html) (projection and loads file) for use with Matplotlib.
 
