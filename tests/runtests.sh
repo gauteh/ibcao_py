@@ -2,5 +2,12 @@
 
 dname=$(dirname ${0})
 
-python -m unittest discover -s $dname -v $@
+echo $dname
+echo $@
+
+pushd $dname
+
+python -m unittest -c -v $@
+
+popd
 

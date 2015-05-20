@@ -76,5 +76,7 @@ install:
   - ln -s ibcao_download/IBCAO_V3_500m_RR.grd .
 
 script:
-  - tests/runtests.sh
+  - tests/runtests.sh -f test_proj
+  - tests/runtests.sh -f test_depth
+  - tests/runtests.sh -f test_plot
 
