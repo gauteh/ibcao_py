@@ -64,6 +64,7 @@ install:
   #- python setup.py --quiet install
   - conda install pip
     #- conda install cartopy
+  - pip install pyproj
   - pip install cartopy
 
 script:
