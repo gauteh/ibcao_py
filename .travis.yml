@@ -74,7 +74,7 @@ install:
   - if [ ! -f ibcao_download/IBCAO_V3_500m_RR.grd]; then
     wget http://www.ngdc.noaa.gov/mgg/bathymetry/arctic/grids/version3_0/IBCAO_V3_500m_RR.grd -O ibcao_download/IBCAO_V3_500m_RR.grd;
     fi
-  - ln -s ibcao_download(IBCAO_V3_500m_RR.grd .
+  - ln -s ibcao_download/IBCAO_V3_500m_RR.grd .
 
 script:
   - tests/runtests.sh
