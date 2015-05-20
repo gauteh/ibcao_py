@@ -1,4 +1,5 @@
 #! /usr/bin/env python
+# encoding: utf-8
 #
 # Author: Gaute Hope <gaute.hope@nersc.no> / 2014-02-19
 #

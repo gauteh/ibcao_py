@@ -1,3 +1,4 @@
+# encoding: utf-8
 import common
 from common import outdir
 import logging as ll
