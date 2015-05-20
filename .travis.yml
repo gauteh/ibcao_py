@@ -4,8 +4,8 @@ python:
   # This is not actually used. Because it would take an overly long time
   # to build scipy we cannot use the virtual env of travis. Instead, we
   # use miniconda.
-  - 2.7
-  - 3.3
+  #- 2.7
+  #- 3.3
   - 3.4
 
 sudo: false

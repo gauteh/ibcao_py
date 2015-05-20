@@ -9,5 +9,9 @@ pushd $dname
 
 python -m unittest -c -v $@
 
+r=$?
+
 popd
+
+exit $r
 
