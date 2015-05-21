@@ -249,6 +249,7 @@ if __name__ == '__main__':
   print ("testing ibcao class")
   import matplotlib.pyplot as plt
   import matplotlib.cm as cm
+  import cartopy.crs as ccrs
 
   i = IBCAO ()
 
@@ -275,5 +276,4 @@ if __name__ == '__main__':
   plt.text (0, 90, "NP", transform = g)
 
   plt.show ()
-
 
