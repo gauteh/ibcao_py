@@ -102,7 +102,10 @@ class IbcaoDepthTest (ut.TestCase):
     ll.info ('testing map_depth vs interp_depth')
     # make a profile
 
-    lon, lat = self.get_lon_lat ()
+    if TRAVIS:
+      lon, lat = self.get_lon_lat (30, 30)
+    else:
+      lon, lat = self.get_lon_lat ()
 
     xy  = self.i.projection.transform_points (ccrs.Geodetic (), lon, lat)
 
