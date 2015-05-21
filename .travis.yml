@@ -85,5 +85,5 @@ script:
   - tests/runtests.sh -f test_depth_interp
   - tests/runtests.sh -f test_depth_map_depth_interp
   - tests/runtests.sh -f test_plot
-  - ./ibcao.py
+  - python ibcao.py
 
