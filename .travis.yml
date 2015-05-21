@@ -82,7 +82,8 @@ script:
   - tests/runtests.sh -f test_proj
   - tests/runtests.sh -f test_depth
   - tests/runtests.sh -f test_depth_map
-  - tests/runtests.sh -f test_depth_interp
+  - tests/runtests.sh -f test_depth_interp.IbcaoDepthTest.test_map_coordinates
+  - tests/runtests.sh -f test_depth_interp.IbcaoDepthTest.test_rect_bivariate_spline
   - tests/runtests.sh -f test_depth_map_depth_interp
   - tests/runtests.sh -f test_plot
   - python ibcao.py
