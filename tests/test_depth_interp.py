@@ -98,33 +98,3 @@ class IbcaoDepthTest (ut.TestCase):
 
     np.testing.assert_allclose (dz, d, atol = 1)
 
-  def test_map_depth_vs_interp_depth (self):
-    ll.info ('testing map_depth vs interp_depth')
-    # make a profile
-
-    if TRAVIS:
-      lon, lat = self.get_lon_lat (30, 30)
-    else:
-      lon, lat = self.get_lon_lat ()
-
-    xy  = self.i.projection.transform_points (ccrs.Geodetic (), lon, lat)
-
-    x = xy[:,0]
-    y = xy[:,1]
-
-    md = self.i.map_depth (x, y)
-
-    id = self.i.interp_depth (x, y)
-
-    if not TRAVIS:
-      plt.figure ()
-      plt.plot (lat, md, label = 'map_depth')
-      plt.plot (lat, id, label = 'interp_depth')
-      plt.legend ()
-      plt.title ('depth')
-      plt.xlabel ('Latitude')
-      plt.savefig (os.path.join (outdir, 'depth_map_depth_vs_interp_depth.png'))
-
-    np.testing.assert_allclose (md, id, atol = 1)
-
-
