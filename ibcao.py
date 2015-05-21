@@ -177,10 +177,10 @@ class IBCAO:
   def z (self):
     return self._z.data
 
-  @property
-  def grid (self):
-    y, x = np.mgrid[self.ylim[0]:self.ylim[1]:self.resolution, self.xlim[0]:self.xlim[1]:self.resolution]
+  def grid (self, div = 1):
+    y, x = np.mgrid[self.ylim[0]:self.ylim[1]:(self.resolution*div), self.xlim[0]:self.xlim[1]:(self.resolution*div)]
     return (x, y)
+
 
   def Colormap (self):
     # load discrete colormap suggested by official IBCAO

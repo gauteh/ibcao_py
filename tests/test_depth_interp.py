@@ -84,12 +84,12 @@ class IbcaoDepthTest (ut.TestCase):
 
     ll.info ('running interp_depth..')
 
-    dz = self.i.interp_depth (xy[:,0], xy[:,1])
+    dz = self.i.map_depth (xy[:,0], xy[:,1])
 
     if not TRAVIS:
       plt.figure ()
       plt.plot (lat, d, label = 'rectbivariatespline')
-      plt.plot (lat, dz, label = 'default')
+      plt.plot (lat, dz, label = 'map_depth')
       plt.legend ()
       plt.title ('depth rectbivariate')
       plt.xlabel ('Latitude')

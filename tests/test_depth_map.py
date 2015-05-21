@@ -24,12 +24,9 @@ class IbcaoDepthTest (ut.TestCase):
   def test_resample_depth (self):
     ll.info ('testing resampling of depth')
 
-    div = 100
+    div = 200
 
-    (x, y) = self.i.grid
-
-    x = x[::div, ::div]
-    y = y[::div, ::div]
+    (x, y) = self.i.grid (div)
 
     shp = x.shape
     x = x.ravel ()
