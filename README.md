@@ -23,6 +23,7 @@ or in your code do something like:
   print ("testing ibcao class")
   import matplotlib.pyplot as plt
   import matplotlib.cm as cm
+  import cartopy.crs as ccrs
 
   i = IBCAO ()
 
@@ -50,6 +51,9 @@ or in your code do something like:
 
   plt.show ()
 ```
+
+check out the test cases in `tests/` for some inspiration on how to use the
+class.
 
 ## Licence / Copyright / Attribution
 

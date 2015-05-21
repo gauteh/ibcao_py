@@ -7,7 +7,8 @@
 
 import  os
 from    pyproj import Proj
-import  scipy as sc, scipy.io, scipy.interpolate, numpy as np
+import  scipy as sc, scipy.io
+import  numpy as np
 import  matplotlib.cm as cm
 import  cartopy.crs as ccrs
 
@@ -130,6 +131,12 @@ class IBCAO:
 
     return m
 
+  ## depth retrieval functions
+  #
+  # map_depth is less memory intensive, while interp_depth
+  # relies on building an interpolation function. if possible,
+  # use map_depth.
+
   _depth_f  = None
   def interp_depth (self, x, y):
     from scipy.interpolate import RectBivariateSpline
@@ -180,7 +187,6 @@ class IBCAO:
   def grid (self, div = 1):
     y, x = np.mgrid[self.ylim[0]:self.ylim[1]:(self.resolution*div), self.xlim[0]:self.xlim[1]:(self.resolution*div)]
     return (x, y)
-
 
   def Colormap (self):
     # load discrete colormap suggested by official IBCAO

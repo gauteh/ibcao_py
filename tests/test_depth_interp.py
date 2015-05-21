@@ -82,7 +82,8 @@ class IbcaoDepthTest (ut.TestCase):
     d[y<self.i.ylim[0]] = np.nan
     d[y>self.i.ylim[1]] = np.nan
 
-    ll.info ('running interp_depth..')
+    ll.info ('running map_depth..')
+    # interp depth is too memory intensive for travis
 
     dz = self.i.map_depth (xy[:,0], xy[:,1])
 
