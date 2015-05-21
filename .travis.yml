@@ -75,6 +75,9 @@ install:
     fi
   - ln -s ibcao_download/IBCAO_V3_500m_RR.grd .
 
+  # Don't plot unnecessary stuff
+  - export TRAVIS=1
+
 script:
   - tests/runtests.sh -f test_proj
   - tests/runtests.sh -f test_depth

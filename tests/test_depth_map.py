@@ -1,6 +1,6 @@
 # encoding: utf-8
 import common
-from common import outdir
+from common import outdir, TRAVIS
 import logging as ll
 import unittest as ut
 
@@ -20,16 +20,6 @@ class IbcaoDepthTest (ut.TestCase):
   def tearDown (self):
     self.i.close ()
     del self.i
-
-  def get_lon_lat (self, nlat = 100, nlon = 100):
-    lat = np.linspace (60, 90, nlat)
-    lon = np.linspace (-180, 180, nlon)
-
-    lat, lon = np.meshgrid (lat, lon)
-    lat = lat.ravel ()
-    lon = lon.ravel ()
-
-    return (lon, lat)
 
   def test_resample_depth (self):
     ll.info ('testing resampling of depth')
@@ -55,19 +45,20 @@ class IbcaoDepthTest (ut.TestCase):
     y = y.reshape (shp)
     z = z.reshape (shp)
 
-    # make new map with resampled grid
-    plt.figure ()
-    ax = plt.axes (projection = self.i.projection)
-    ax.set_xlim (*self.i.xlim)
-    ax.set_ylim (*self.i.ylim)
+    if not TRAVIS:
+      # make new map with resampled grid
+      plt.figure ()
+      ax = plt.axes (projection = self.i.projection)
+      ax.set_xlim (*self.i.xlim)
+      ax.set_ylim (*self.i.ylim)
 
-    ax.coastlines ('10m')
-    # plot every 'div' data point
-    (cmap, norm) = self.i.Colormap ()
-    cm = ax.pcolormesh (self.i.x[::div], self.i.y[::div], z, cmap = cmap, norm = norm)
-    plt.colorbar (cm)
+      ax.coastlines ('10m')
+      # plot every 'div' data point
+      (cmap, norm) = self.i.Colormap ()
+      cm = ax.pcolormesh (self.i.x[::div], self.i.y[::div], z, cmap = cmap, norm = norm)
+      plt.colorbar (cm)
 
-    plt.savefig (os.path.join (outdir, 'resampled_map.png'))
+      plt.savefig (os.path.join (outdir, 'resampled_map.png'))
 
 
 

@@ -1,6 +1,6 @@
 # encoding: utf-8
 import common
-from common import outdir
+from common import outdir, TRAVIS
 import logging as ll
 import unittest as ut
 
@@ -50,13 +50,14 @@ class IbcaoDepthTest (ut.TestCase):
     ll.info ('dz=')
     ll.info (dz.shape)
 
-    plt.figure ()
-    plt.plot (lat, z, label = 'map_coordinates')
-    plt.plot (lat, dz, label = 'default')
-    plt.legend ()
-    plt.title ('depth')
-    plt.xlabel ('Latitude')
-    plt.savefig (os.path.join (outdir, 'depth_map_coordinates.png'))
+    if not TRAVIS:
+      plt.figure ()
+      plt.plot (lat, z, label = 'map_coordinates')
+      plt.plot (lat, dz, label = 'default')
+      plt.legend ()
+      plt.title ('depth')
+      plt.xlabel ('Latitude')
+      plt.savefig (os.path.join (outdir, 'depth_map_coordinates.png'))
 
     np.testing.assert_allclose (dz, z, atol = 1)
 
@@ -81,15 +82,18 @@ class IbcaoDepthTest (ut.TestCase):
     d[y<self.i.ylim[0]] = np.nan
     d[y>self.i.ylim[1]] = np.nan
 
+    ll.info ('running interp_depth..')
+
     dz = self.i.interp_depth (xy[:,0], xy[:,1])
 
-    plt.figure ()
-    plt.plot (lat, d, label = 'rectbivariatespline')
-    plt.plot (lat, dz, label = 'default')
-    plt.legend ()
-    plt.title ('depth rectbivariate')
-    plt.xlabel ('Latitude')
-    plt.savefig (os.path.join (outdir, 'depth_rectbivariate.png'))
+    if not TRAVIS:
+      plt.figure ()
+      plt.plot (lat, d, label = 'rectbivariatespline')
+      plt.plot (lat, dz, label = 'default')
+      plt.legend ()
+      plt.title ('depth rectbivariate')
+      plt.xlabel ('Latitude')
+      plt.savefig (os.path.join (outdir, 'depth_rectbivariate.png'))
 
     np.testing.assert_allclose (dz, d, atol = 1)
 
@@ -108,13 +112,14 @@ class IbcaoDepthTest (ut.TestCase):
 
     id = self.i.interp_depth (x, y)
 
-    plt.figure ()
-    plt.plot (lat, md, label = 'map_depth')
-    plt.plot (lat, id, label = 'interp_depth')
-    plt.legend ()
-    plt.title ('depth')
-    plt.xlabel ('Latitude')
-    plt.savefig (os.path.join (outdir, 'depth_map_depth_vs_interp_depth.png'))
+    if not TRAVIS:
+      plt.figure ()
+      plt.plot (lat, md, label = 'map_depth')
+      plt.plot (lat, id, label = 'interp_depth')
+      plt.legend ()
+      plt.title ('depth')
+      plt.xlabel ('Latitude')
+      plt.savefig (os.path.join (outdir, 'depth_map_depth_vs_interp_depth.png'))
 
     np.testing.assert_allclose (md, id, atol = 1)
 

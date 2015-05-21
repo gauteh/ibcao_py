@@ -1,6 +1,6 @@
 # encoding: utf-8
 import common
-from common import outdir
+from common import outdir, TRAVIS
 import logging as ll
 import unittest as ut
 

@@ -18,4 +18,9 @@ outdir  = os.path.join (TESTDIR, 'out')
 if not os.path.exists (outdir):
   os.makedirs (outdir)
 
+if os.environ.get ('travis') is not None:
+  TRAVIS = True
+  ll.info ('running in travis')
+else:
+  TRAVIS = False
 
