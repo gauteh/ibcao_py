@@ -134,11 +134,12 @@ class IBCAO:
 
     return m
 
-  def get_proj (self):
+  def get_proj_str (self):
     """
-    Returns a Proj.4 instance set up for the IBCAO UPS variant
+    Returns a Proj.4 string for the IBCAO UPS variant.
     """
-    np_stere = Proj ("""
+
+    return """
       +proj=stere
       +lat_ts=%(lat_ts)f
       +lat_0=%(origin_lat)f
@@ -153,7 +154,13 @@ class IBCAO:
         'scale_factor' : self.scale_factor,
         'x0' : 0,
         'y0' : 0
-        })
+        }
+
+  def get_proj (self):
+    """
+    Returns a Proj.4 instance set up for the IBCAO UPS variant
+    """
+    np_stere = Proj (self.get_proj_str())
 
     return np_stere
 
