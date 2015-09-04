@@ -122,7 +122,10 @@ class IBCAO:
     self.ibcao_nc.close ()
 
   def get_cartopy (self):
-    # source: IBCAO_V3_README.txt
+    """
+    Returns a Cartopy instance set up for the IBCAO UPS variant. A separate
+    instance is used internally.
+    """
     m = ccrs.Stereographic (central_latitude = self.origin_lat,
                             central_longitude = self.origin_lon,
                             false_easting   = 0,
@@ -212,9 +215,19 @@ class IBCAO:
     return (x, y)
 
   def Colormap (self):
-    # load discrete colormap suggested by official IBCAO
+    """
+    return a discrete colormap and norm based on the official IBCAO colormap.
+
+    usage:
+
+    (cmap, norm) = self.Colormap ()
+    cm = ax.pcolormesh (x, y, z, cmap = cmap, norm = norm)
+    plt.colorbar (cm)
+
+    """
+
     # loader based on: http://wiki.scipy.org/Cookbook/Matplotlib/Loading_a_colormap_dynamically and
-    # http://stackoverflow.com/questions/26559764/matplotlib-pcolormesh-discrete-colors
+    #   http://stackoverflow.com/questions/26559764/matplotlib-pcolormesh-discrete-colors
 
     cmap = np.empty ((0,4))
     c = 0
