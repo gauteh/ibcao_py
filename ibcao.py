@@ -131,6 +131,29 @@ class IBCAO:
 
     return m
 
+  def get_proj (self):
+    """
+    Returns a Proj.4 instance set up for the IBCAO UPS variant
+    """
+    np_stere = Proj ("""
+      +proj=stere
+      +lat_ts=%(lat_ts)f
+      +lat_0=%(origin_lat)f
+      +lon_0=%(origin_lon)f
+      +k_0=%(scale_factor)f
+      +x_0=%(x0)f
+      +y_0=%(y0)f
+      """ % {
+        'lat_ts' : self.true_scale,
+        'origin_lat' : self.origin_lat,
+        'origin_lon' : self.origin_lon,
+        'scale_factor' : self.scale_factor,
+        'x0' : 0,
+        'y0' : 0
+        })
+
+    return np_stere
+
   ## depth retrieval functions
   #
   # map_depth is less memory intensive, while interp_depth

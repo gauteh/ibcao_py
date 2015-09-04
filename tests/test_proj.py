@@ -22,25 +22,25 @@ class IbcaoProjTest (ut.TestCase):
     del self.i
 
   def get_np_stere (self):
-    np_stere = Proj ("""
-      +proj=stere
-      +lat_ts=%(lat_ts)f
-      +lat_0=%(origin_lat)f
-      +lon_0=%(origin_lon)f
-      +k_0=%(scale_factor)f
-      +x_0=%(x0)f
-      +y_0=%(y0)f
-      """ % {
-        'lat_ts' : self.i.true_scale,
-        'origin_lat' : self.i.origin_lat,
-        'origin_lon' : self.i.origin_lon,
-        'scale_factor' : self.i.scale_factor,
-        'x0' : 0,
-        'y0' : 0
-        })
+    #np_stere = Proj ("""
+      #+proj=stere
+      #+lat_ts=%(lat_ts)f
+      #+lat_0=%(origin_lat)f
+      #+lon_0=%(origin_lon)f
+      #+k_0=%(scale_factor)f
+      #+x_0=%(x0)f
+      #+y_0=%(y0)f
+      #""" % {
+        #'lat_ts' : self.i.true_scale,
+        #'origin_lat' : self.i.origin_lat,
+        #'origin_lon' : self.i.origin_lon,
+        #'scale_factor' : self.i.scale_factor,
+        #'x0' : 0,
+        #'y0' : 0
+        #})
 
 
-    return np_stere
+    return self.i.get_proj ()
 
   def test_ibcao_grid (self):
     ll.info ('test grid coordinates')
