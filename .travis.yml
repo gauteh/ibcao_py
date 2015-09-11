@@ -70,6 +70,7 @@ install:
   - mkdir -p ibcao_download
   - if [ ! -f ibcao_download/IBCAO_V3_500m_RR.grd ]; then
     wget http://www.ngdc.noaa.gov/mgg/bathymetry/arctic/grids/version3_0/IBCAO_V3_500m_RR.grd -O ibcao_download/IBCAO_V3_500m_RR.grd;
+    else echo "using IBCAO from cache.";
     fi
   - ln -s ibcao_download/IBCAO_V3_500m_RR.grd .
 
