@@ -113,6 +113,9 @@ class IBCAO:
 
     self.projection = self.get_cartopy ()
 
+    # store for short-cut
+    self.g = ccrs.Geodetic ()
+
     # don't close when mmapped: scipy#3630
     #self.ibcao_nc.close ()
 
@@ -276,7 +279,7 @@ class IBCAO:
     ax.set_ylim (*self.ylim)
 
     ax.coastlines ('10m')
-    ax.gridlines (crs = ccrs.Geodetic(), ylocs = np.arange (60, 90, 5))
+    ax.gridlines (crs = self.g, ylocs = np.arange (60, 90, 5))
 
     # plot every 'div' data point
     (cmap, norm) = self.Colormap ()
