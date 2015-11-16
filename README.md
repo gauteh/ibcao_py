@@ -7,7 +7,7 @@ Class which sets up the [IBCAO](http://www.ngdc.noaa.gov/mgg/bathymetry/arctic/a
 
 ## Usage
 
-Download the IBCAO grid: [ngdc.noaa.gov](http://www.ngdc.noaa.gov/mgg/bathymetry/arctic/grids/version3_0/IBCAO_V3_500m_RR.grd)
+Download the IBCAO grid: [ngdc.noaa.gov](http://www.ngdc.noaa.gov/mgg/bathymetry/arctic/grids/version3_0/IBCAO_V3_500m_RR.grd.gz)
 
 Run test with:
 ```sh

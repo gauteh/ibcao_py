@@ -19,7 +19,7 @@ class IBCAO:
 
     http://www.ngdc.noaa.gov/mgg/bathymetry/arctic/ibcaoversion3.html
 
-  Download file: http://www.ngdc.noaa.gov/mgg/bathymetry/arctic/grids/version3_0/IBCAO_V3_500m_RR.grd
+  Download file: http://www.ngdc.noaa.gov/mgg/bathymetry/arctic/grids/version3_0/IBCAO_V3_500m_RR.grd.gz
 
   Specification can be found in file: IBCAO_V3_README.txt from:
 
