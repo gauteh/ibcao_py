@@ -144,6 +144,8 @@ class IBCAO:
 
     return """
       +proj=stere
+      +ellps=WGS84
+      +datum=WGS84
       +lat_ts=%(lat_ts)f
       +lat_0=%(origin_lat)f
       +lon_0=%(origin_lon)f
