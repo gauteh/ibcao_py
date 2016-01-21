@@ -272,7 +272,7 @@ class IBCAO:
 
     return (cmap_out, norm)
 
-  def template (self, div = 10):
+  def template (self, div = 1):
     # set up a template plot
     import matplotlib.pyplot as plt
     f = plt.figure ()
@@ -285,7 +285,7 @@ class IBCAO:
 
     # plot every 'div' data point
     (cmap, norm) = self.Colormap ()
-    cm = ax.pcolormesh (self.x[::div], self.y[::div], self.z[::div, ::div], cmap = cmap, norm = norm)
+    cm = ax.pcolorfast (self.x[::div], self.y[::div], self.z[::div, ::div], cmap = cmap, norm = norm)
     plt.colorbar (cm)
 
     plt.title ('The International Bathymetric Chart of the Arctic Ocean')
