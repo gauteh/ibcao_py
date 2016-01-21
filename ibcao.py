@@ -301,7 +301,7 @@ if __name__ == '__main__':
 
   i = IBCAO ()
 
-  f = i.template (1) # plot all datapoints
+  f = i.template ()
 
   # lets put some text along the parallels
   lat = np.arange (65, 90, 5)

@@ -1,6 +1,4 @@
 # IBCAO py
-[![Build Status](https://api.travis-ci.org/nansencenter/ibcao_py.svg?branch=master)](https://travis-ci.org/nansencenter/ibcao_py)
-
 Class which sets up the [IBCAO](http://www.ngdc.noaa.gov/mgg/bathymetry/arctic/arctic.html) (projection and loads file) for use with [Matplotlib](http://matplotlib.org/) and [Cartopy](http://scitools.org.uk/cartopy/).
 
 <img src="ibcao_example.png" />
@@ -23,7 +21,7 @@ or in your code do something like:
 
   i = IBCAO ()
 
-  f = i.template (10) # only plot every 10th data point
+  f = i.template ()
 
   # lets put some text along the parallels
   lat = np.arange (65, 90, 5)
