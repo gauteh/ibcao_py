@@ -180,7 +180,7 @@ class IbcaoProjTest (ut.TestCase):
 
     nx, ny = np_stere (llon, llat)
 
-    np.testing.assert_array_equal (x, nx )
-    np.testing.assert_array_equal (y, ny )
+    np.testing.assert_allclose (x, nx )
+    np.testing.assert_allclose (y, ny )
 
 
