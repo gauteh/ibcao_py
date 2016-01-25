@@ -6,7 +6,7 @@
 # IBCAO interface
 
 import  os
-from    pyproj import Proj
+from    pyproj import Proj, Geod
 import  scipy as sc, scipy.io
 import  numpy as np
 import  matplotlib.cm as cm
