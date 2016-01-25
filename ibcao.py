@@ -105,6 +105,7 @@ class IBCAO:
 
     self.projection_s   = 'stere'
     self.datum          = 'WGS84'
+    self.ellps          = 'WGS84'
     self.vertical_datum = 'mean sea level'
     self.true_scale     = 75.0  # deg N
     self.scale_factor   = 0.982966757777337
@@ -143,9 +144,9 @@ class IBCAO:
     """
 
     return """
-      +proj=stere
-      +ellps=WGS84
-      +datum=WGS84
+      +proj=%(proj)s
+      +ellps=%(ellps)s
+      +datum=%(datum)s
       +lat_ts=%(lat_ts)f
       +lat_0=%(origin_lat)f
       +lon_0=%(origin_lon)f
@@ -153,6 +154,9 @@ class IBCAO:
       +x_0=%(x0)f
       +y_0=%(y0)f
       """ % {
+        'proj' : self.projection_s,
+        'ellps' : self.ellps,
+        'datum' : self.datum,
         'lat_ts' : self.true_scale,
         'origin_lat' : self.origin_lat,
         'origin_lon' : self.origin_lon,
@@ -165,9 +169,10 @@ class IBCAO:
     """
     Returns a Proj.4 instance set up for the IBCAO UPS variant
     """
-    np_stere = Proj (self.get_proj_str())
+    return Proj (self.get_proj_str())
 
-    return np_stere
+  def get_geod (self):
+    return Geod (ellps = self.ellps)
 
   ## depth retrieval functions
   #
