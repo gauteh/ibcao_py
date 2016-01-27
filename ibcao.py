@@ -199,13 +199,13 @@ class IBCAO:
 
     return d
 
-  def map_depth (self, x, y):
+  def map_depth (self, x, y, order = 3):
     # this is faster, use if possible
     from scipy.ndimage import map_coordinates
     x = (x + self.extent) / self.resolution
     y = (y + self.extent) / self.resolution
 
-    return map_coordinates (self.z, [y, x], cval = np.nan)
+    return map_coordinates (self.z, [y, x], cval = np.nan, order = order)
 
   @property
   def xlim (self):
