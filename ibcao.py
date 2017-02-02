@@ -291,7 +291,8 @@ class IBCAO:
     # plot every 'div' data point
     (cmap, norm) = self.Colormap ()
     cm = ax.pcolorfast (self.x[::div], self.y[::div], self.z[::div, ::div], cmap = cmap, norm = norm)
-    plt.colorbar (cm)
+    cb = plt.colorbar (cm)
+    cb.set_label ('Depth [m]')
 
     plt.title ('The International Bathymetric Chart of the Arctic Ocean')
 
