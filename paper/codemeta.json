@@ -1,0 +1,23 @@
+{
+  "@context": "https://raw.githubusercontent.com/codemeta/codemeta/master/codemeta.jsonld",
+  "@type": "Code",
+  "author": [
+    {
+      "@id": "http://orcid.org/0000-0002-5653-1447",
+      "@type": "Person",
+      "email": "eg@gaute.vetsj.com",
+      "name": "Gaute Hope",
+      "affiliation": "Nansen Environmental and Remote Sensing Center"
+    }
+  ],
+  "identifier": "",
+  "codeRepository": "https://github.com/gauteh/ibcao_py",
+  "datePublished": "2017-04-06",
+  "dateModified": "2017-04-06",
+  "dateCreated": "2017-04-06",
+  "description": " A matplotlib library for using the International Bathymetric Chart of the Arctic Ocean with cartopy and matplotlib",
+  "keywords": "python, arctic-ocean, ibcao, matplotlib, gis",
+  "license": "LGPL v3.0",
+  "title": "ibcao_py",
+  "version": "v1.0"
+}
