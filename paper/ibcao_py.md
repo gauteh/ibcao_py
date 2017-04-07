@@ -31,5 +31,7 @@
   built in transformations. A demo is set up, and a test suite is included confirming the
   correctness of the setup, and showcasing some of the possibilities.
 
+  -![IBCAO plotted with ibcao_py](ibcao_example.png)
+
   # References
 
