@@ -3,21 +3,31 @@ Class which sets up the [IBCAO](http://www.ngdc.noaa.gov/mgg/bathymetry/arctic/a
 
 <img src="paper/ibcao_example.png" />
 
+## Installation
+
+Use setuptools:
+```sh
+$ python setup.py build
+$ python setup.py install
+```
+
 ## Usage
 
-Download the IBCAO grid: [ngdc.noaa.gov](http://www.ngdc.noaa.gov/mgg/bathymetry/arctic/grids/version3_0/IBCAO_V3_500m_RR.grd.gz)
+1. Download the IBCAO grid: [ngdc.noaa.gov](http://www.ngdc.noaa.gov/mgg/bathymetry/arctic/grids/version3_0/IBCAO_V3_500m_RR.grd.gz) and specify it when you instatiate the IBCAO class or place it in the same directory as `ibcao.py`.
 
-Run test with:
+2. Run a test with:
+
 ```sh
 $ python ibcao.py
 ```
 
-or in your code do something like:
+3. or in your code do something like:
 ```python
   print ("testing ibcao class")
   import matplotlib.pyplot as plt
   import matplotlib.cm as cm
   import cartopy.crs as ccrs
+  from ibcao import *
   from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 
   i = IBCAO ()
@@ -47,8 +57,8 @@ or in your code do something like:
   plt.show ()
 ```
 
-check out the test cases in `tests/` for some inspiration on how to use the
-class.
+> check out the test cases in `tests/` for some inspiration on how to use the
+> class.
 
 ## Reference
 

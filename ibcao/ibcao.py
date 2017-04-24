@@ -81,7 +81,7 @@ class IBCAO:
   def __init__ (self, ibcao_grd_file = ibcao_grid):
     self.ibcao_grid = ibcao_grd_file
     if not os.path.exists (self.ibcao_grid):
-      print ('IBCAO grid could not be found in local directory, download from: http://www.ngdc.noaa.gov/mgg/bathymetry/arctic/grids/version3_0/IBCAO_V3_500m_RR.grd')
+      print ('IBCAO grid could not be found in:' + self.ibcao_grid + ' , download from: http://www.ngdc.noaa.gov/mgg/bathymetry/arctic/grids/version3_0/IBCAO_V3_500m_RR.grd')
       raise RuntimeError ('IBCAO grid not found')
 
 
