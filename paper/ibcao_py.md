@@ -25,11 +25,24 @@
   Chart of the Arctic Ocean [@Jakobsson2012] with Cartopy [@Cartopy] in
   matplotlib [@matplotlib].
 
-  The toolbox sets up the correct projection (Universal Polar Stereographic) so
-  that the map is projected correctly and does not need to be re-projected.
-  Plotting data defined for other coordinate systems is easy by using Cartopy's
-  built in transformations. A demo is set up, and a test suite is included confirming the
-  correctness of the setup, and showcasing some of the possibilities.
+  The [IBCAO](http://www.ngdc.noaa.gov/mgg/bathymetry/arctic/arctic.html) is
+  distributed using the Universal Polar Stereographic projection (UPS) with custom
+  parameters and grid-spacing. This package sets up the projection correctly, and
+  loads the map data in an efficient way. This ensures that no transformation is
+  needed when plotting the map, and that data that is plotted on the map is
+  correctly positioned. A ready figure with the map loaded is provided, with a
+  plotting transformation to the Geodetic projection ready so that data provided
+  in the familiar latitude and longitude coordinates may be plotted easily.
+
+  Additionally, efficient interpolation routines for reading the bathymetry
+  (depth) from the map data at coordinates, tracks or grids of coordinates are
+  provided so that these may be easily read.
+
+  The class may it self be used as demonstration, though plotting the IBCAO is
+  a matter of four lines of python code. The documentation showcases plotting
+  of the IBCAO, plotting of data on top of the map and retrieval of a depth
+  profile. The package is covered by a test suite.
+
 
   -![IBCAO plotted with ibcao_py](ibcao_example.png)
 
