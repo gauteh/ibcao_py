@@ -34,7 +34,7 @@ $ python setup.py install
 $ python ibcao.py
 ```
 
-3. a) Have a look at the demonstration for how to [get started with the package](https://github.com/gauteh/ibcao_py/blob/master/doc/IBCAO%20demonstration.ipynb) and check out [the reference](https://github.com/gauteh/ibcao_py/blob/master/doc/reference.md).
+3. a) Have a look at the demonstration for how to [get started with the package](https://github.com/gauteh/ibcao_py/blob/master/doc/IBCAO%20demonstration.ipynb) and check out [the API reference](http://ibcao-py.readthedocs.io/en/latest/).
 
    b) or to get started as quick as possible, do something like:
 ```python
