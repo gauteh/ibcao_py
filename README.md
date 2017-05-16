@@ -1,6 +1,19 @@
 # IBCAO py
 Class which sets up the [IBCAO](http://www.ngdc.noaa.gov/mgg/bathymetry/arctic/arctic.html) (projection and loads file) for use with [Matplotlib](http://matplotlib.org/) and [Cartopy](http://scitools.org.uk/cartopy/).
 
+The [IBCAO](http://www.ngdc.noaa.gov/mgg/bathymetry/arctic/arctic.html) is
+ditributed using the Universal Polar Stereographic projection (UPS) with custom
+parameters and grid-spacing. This package sets up the projection correctly, and
+loads the map data in an efficient way. This ensures that no transformation is
+needed when plotting the map, and that data that is plotted on the map is
+correctly positioned. A ready figure with the map loaded is provided, with a
+plotting transformation to the Geodetic projection ready so that data provided
+in the familiar latitude and longitude coordinates may be plotted easily.
+
+Additionally, efficient interpolation routines for reading the bathymetry
+(depth) from the map data at coordinates, tracks or grids of coordinates are
+provided so that these may be easily read.
+
 <img src="paper/ibcao_example.png" />
 
 ## Installation
