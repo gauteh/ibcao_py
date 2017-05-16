@@ -23,7 +23,9 @@
 
   This is a python plotting toolbox for using the International Bathymetric
   Chart of the Arctic Ocean [@Jakobsson2012] with Cartopy [@Cartopy] in
-  matplotlib [@matplotlib].
+  matplotlib [@matplotlib] suitable for scientist creating figures for
+  publications, automated visualization of data, and querying the depth of the
+  Arctic ocean either for single use or in an automatic fashion.
 
   The [IBCAO](http://www.ngdc.noaa.gov/mgg/bathymetry/arctic/arctic.html) is
   distributed using the Universal Polar Stereographic projection (UPS) with custom
