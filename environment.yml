@@ -1,0 +1,11 @@
+name: ibcao
+channels:
+  - scitools
+dependencies:
+  - numpy
+  - scipy
+  - setuptools
+  - matplotlib
+  - pyproj
+  - cartopy
+
