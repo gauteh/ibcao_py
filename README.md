@@ -60,6 +60,10 @@ $ python ibcao.py
 > check out the test cases in `tests/` for some inspiration on how to use the
 > class.
 
+## Contributing or reporting issues
+
+Please report issues at the github repository: http://github.com/gauteh/ibcao_py. Patches and improvements are very welcome to be submitted either by a pull-request through github or by e-mail. Contributions must be made under the same license as this package (LGPLv3).
+
 ## Reference
 
 > The IBCAO is provided by: <br />
