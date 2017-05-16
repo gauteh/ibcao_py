@@ -2,7 +2,7 @@
 Class which sets up the [IBCAO](http://www.ngdc.noaa.gov/mgg/bathymetry/arctic/arctic.html) (projection and loads file) for use with [Matplotlib](http://matplotlib.org/) and [Cartopy](http://scitools.org.uk/cartopy/).
 
 The [IBCAO](http://www.ngdc.noaa.gov/mgg/bathymetry/arctic/arctic.html) is
-ditributed using the Universal Polar Stereographic projection (UPS) with custom
+distributed using the Universal Polar Stereographic projection (UPS) with custom
 parameters and grid-spacing. This package sets up the projection correctly, and
 loads the map data in an efficient way. This ensures that no transformation is
 needed when plotting the map, and that data that is plotted on the map is
@@ -26,7 +26,7 @@ $ python setup.py install
 
 ## Usage
 
-1. Download the IBCAO grid: [ngdc.noaa.gov](http://www.ngdc.noaa.gov/mgg/bathymetry/arctic/grids/version3_0/IBCAO_V3_500m_RR.grd.gz) and specify it when you instatiate the IBCAO class or place it in the same directory as `ibcao.py`.
+1. Download the IBCAO grid: [ngdc.noaa.gov](http://www.ngdc.noaa.gov/mgg/bathymetry/arctic/grids/version3_0/IBCAO_V3_500m_RR.grd.gz) and specify it when you instantiate the IBCAO class or place it in the same directory as `ibcao.py`.
 
 2. Run a test with:
 
@@ -60,5 +60,5 @@ Please report issues at the github repository: http://github.com/gauteh/ibcao_py
 
 Author: Gaute Hope / gaute.hope@nersc.no
 
-This work is licenced under the GNU Lesser General Public Licence (LGPLv3).
+This work is licensed under the GNU Lesser General Public Licence (LGPLv3).
 
