@@ -40,7 +40,7 @@ class IbcaoProjTest (ut.TestCase):
         #})
 
 
-    return self.i.get_proj ()
+    return self.i.proj
 
   def test_ibcao_grid (self):
     ll.info ('test grid coordinates')

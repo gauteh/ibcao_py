@@ -38,14 +38,14 @@ class IBCAO:
 
   # look in current path for grid file, I usually symlink it in here
   # from somewhere.
-  ibcao_grid_name = 'IBCAO_V3_500m_RR.grd'
-  ibcao_grid = os.path.join(os.path.dirname(os.path.realpath(__file__)), ibcao_grid_name)
+  _ibcao_grid_name = 'IBCAO_V3_500m_RR.grd'
+  _ibcao_grid = os.path.join(os.path.dirname(os.path.realpath(__file__)), _ibcao_grid_name)
 
   VERSION = '3.0'
   REFERENCE = 'Jakobsson, M., L. A. Mayer, B. Coakley, J. A. Dowdeswell, S. Forbes, B. Fridman, H. Hodnesdal, R. Noormets, R. Pedersen, M. Rebesco, H.-W. Schenke, Y. Zarayskaya A, D. Accettella, A. Armstrong, R. M. Anderson, P. Bienhoff, A. Camerlenghi, I. Church, M. Edwards, J. V. Gardner, J. K. Hall, B. Hell, O. B. Hestvik, Y. Kristoffersen, C. Marcussen, R. Mohammad, D. Mosher, S. V. Nghiem, M. T. Pedrosa, P. G. Travaglini, and P. Weatherall, The International Bathymetric Chart of the Arctic Ocean (IBCAO) Version 3.0, Geophysical Research Letters, doi: 10.1029/2012GL052219.'
 
   # previously kept in ibcao.cpt
-  COLORMAP = """\
+  _COLORMAP = """\
 # downloaded from IBCAO homepage
 #Discrete color table for Ocean and continous for land in RGB for the Arctic bathymetry and topography
 -6000	18	10	59	-5000	18	10	59
@@ -78,7 +78,7 @@ class IBCAO:
 1500	170	170	170	5000	200	200	200
 """
 
-  def __init__ (self, ibcao_grd_file = ibcao_grid):
+  def __init__ (self, ibcao_grd_file = _ibcao_grid):
     self.ibcao_grid = ibcao_grd_file
     if not os.path.exists (self.ibcao_grid):
       print ('IBCAO grid could not be found in:' + self.ibcao_grid + ' , download from: http://www.ngdc.noaa.gov/mgg/bathymetry/arctic/grids/version3_0/IBCAO_V3_500m_RR.grd')
@@ -116,17 +116,23 @@ class IBCAO:
 
     # store for short-cut
     self.g = ccrs.Geodetic ()
+    self._ups = self.get_cartopy ()
 
     # don't close when mmapped: scipy#3630
     #self.ibcao_nc.close ()
 
   def close (self):
+    """
+    Closes the map file. The map is memorymapped, so this will cause a warning unless all references to the map have been removed.
+    """
     # make sure you don't close in case mmap is used elsewhere
     print ("ibcao: closing map.")
     self.ibcao_nc.close ()
 
   def get_cartopy (self):
     """
+    Deprecated: Use `ups`.
+
     Returns a Cartopy instance set up for the IBCAO UPS variant. A separate
     instance is used internally.
     """
@@ -138,7 +144,17 @@ class IBCAO:
 
     return m
 
-  def get_proj_str (self):
+  @property
+  def ups (self):
+    """
+    Returns a Cartopy Stereographic instance set up for the Universal Polar
+    Stereographic (UPS) projection used in the IBCAO.
+    """
+    return self._ups
+
+
+  @property
+  def proj_str (self):
     """
     Returns a Proj.4 string for the IBCAO UPS variant.
     """
@@ -165,13 +181,18 @@ class IBCAO:
         'y0' : 0
         }
 
-  def get_proj (self):
+  @property
+  def proj (self):
     """
     Returns a Proj.4 instance set up for the IBCAO UPS variant
     """
-    return Proj (self.get_proj_str())
+    return Proj (self.proj_str)
 
-  def get_geod (self):
+  @property
+  def geod (self):
+    """
+    Return a `pyproj.Geoid` set up with the WGS84 ellipsoid.
+    """
     return Geod (ellps = self.ellps)
 
   ## depth retrieval functions
@@ -182,6 +203,25 @@ class IBCAO:
 
   _depth_f  = None
   def interp_depth (self, x, y):
+    """
+    Interpolate depth at `x` and `y` using `scipy.interpolate.RectBivariateSpline`.
+
+    This method is more accurate but slower than `map_depth`.
+
+    The interpolation function is cached, so later interpolations should be
+    faster.
+
+    Args:
+      x: (1D array) coordinates (longitude) in meters on UPS
+      y: (1D array) coordinates (latitude)  in meters on UPS
+
+
+    points outside the map are set to `np.nan`.
+
+    Returns:
+      z: depths along x and y.
+
+    """
     from scipy.interpolate import RectBivariateSpline
 
     if self._depth_f is None:
@@ -200,6 +240,33 @@ class IBCAO:
     return d
 
   def map_depth (self, x, y, order = 3):
+    """
+    Map coordinates `x` and `y` onto `z` in order to retrieve depth using
+    `scipy.ndimage.map_coordinates`.
+
+    Args:
+      x: (1D array) coordinates (longitude) in meters on UPS
+      y: (1D array) coordinates (latitude)  in meters on UPS
+
+
+    points outside the map are set to `np.nan`.
+
+    Returns:
+      z: depths along x and y.
+
+    Example: Get points along great circle:
+
+    >>> start = [10, 78]    # positions in degrees
+    >>> end   = [-18, 76]
+    >>>
+    >>> ## Sample a great circle between the two points using the pyproj.Geod set up by the IBCAO class
+    >>> i  = IBCAO ()
+    >>> gc = np.array(i.get_geod ().npts (start[0], start[1], end[0], end[1], 100))
+    >>>
+    >>> ## Interpolate the depth along the great circle
+    >>> gc_xy = i.ups.transform_points (i.g, gc[:,0], gc[:,1]) # convert to UPS coordinates
+    >>> depth = i.map_depth (gc_xy[:,0], gc_xy[:,1])
+    """
     # this is faster, use if possible
     from scipy.ndimage import map_coordinates
     x = (x + self.extent) / self.resolution
@@ -209,37 +276,65 @@ class IBCAO:
 
   @property
   def xlim (self):
+    """
+    Extent in longitude coordinates (meters) on UPS projection.
+    """
     return (-self.extent, self.extent)
 
   @property
   def ylim (self):
+    """
+    Extent in latitude coordinates (meters) on UPS projection.
+    """
     return (-self.extent, self.extent)
 
   @property
   def x (self):
+    """
+    `x` (longitude) arguments for depth data (`z`) in meters (UPS).
+    """
     return self.ups_x.data
 
   @property
   def y (self):
+    """
+    `y` (latitude) arguments for depth data (`z`) in meters (UPS).
+    """
     return self.ups_y.data
 
   @property
   def z (self):
+    """
+    Depth data on `grid`.
+    """
     return self._z.data
 
   def grid (self, div = 1):
+    """
+    Create position grid for IBCAO
+
+    Args:
+      div:  Skip every div point (1 include all, default) corresponds to
+            `div` in `template()`.
+
+    Returns:
+      (x, y): A tuple with `x` and `y` grid for `z`.
+    """
     y, x = np.mgrid[self.ylim[0]:self.ylim[1]:(self.resolution*div), self.xlim[0]:self.xlim[1]:(self.resolution*div)]
     return (x, y)
 
   def Colormap (self):
     """
-    return a discrete colormap and norm based on the official IBCAO colormap.
+    Returns a discrete colormap and norm based on the official IBCAO colormap.
 
-    usage:
+    Returns:
+      (cmap, norm): A tuple with the colormap and the norm
 
-    (cmap, norm) = self.Colormap ()
-    cm = ax.pcolormesh (x, y, z, cmap = cmap, norm = norm)
-    plt.colorbar (cm)
+    Example:
+
+    >>> (cmap, norm) = self.Colormap ()
+    >>> cm = ax.pcolormesh (x, y, z, cmap = cmap, norm = norm)
+    >>> plt.colorbar (cm)
 
     """
 
@@ -249,7 +344,7 @@ class IBCAO:
     cmap = np.empty ((0,4))
     c = 0
 
-    for l in self.COLORMAP.split("\n"):
+    for l in self._COLORMAP.split("\n"):
       l = l.strip()
 
       if len(l) == 0 or l[0] == '#':
@@ -278,6 +373,20 @@ class IBCAO:
     return (cmap_out, norm)
 
   def template (self, div = 1):
+    """
+    Sets up and returns a figure with the IBCAO map loaded, ready for additional plotting:
+
+    Args:
+      div: use every div point in map (1 is default, use all points)
+
+    Returns:
+      matplotlib Figure
+
+    >>> i = IBCAO ()
+    >>> f = i.template ()
+    >>> f.show ()
+
+    """
     # set up a template plot
     import matplotlib.pyplot as plt
     f = plt.figure ()
