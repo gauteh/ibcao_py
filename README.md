@@ -1,4 +1,7 @@
 # IBCAO py
+
+<a href="http://joss.theoj.org/papers/10.21105/joss.00250"><img src="http://joss.theoj.org/papers/10.21105/joss.00250/status.svg"></a>
+
 Class which sets up the [IBCAO](http://www.ngdc.noaa.gov/mgg/bathymetry/arctic/arctic.html) (projection and loads file) for use with [Matplotlib](http://matplotlib.org/) and [Cartopy](http://scitools.org.uk/cartopy/).
 
 The [IBCAO](http://www.ngdc.noaa.gov/mgg/bathymetry/arctic/arctic.html) is
