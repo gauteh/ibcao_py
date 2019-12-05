@@ -289,6 +289,12 @@ class IBCAO:
     return (-self.extent, self.extent)
 
   @property
+  def imextent(self):
+    return [*self.xlim, *self.ylim]
+
+
+
+  @property
   def x (self):
     """
     `x` (longitude) arguments for depth data (`z`) in meters (UPS).
