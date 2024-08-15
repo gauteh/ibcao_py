@@ -2,6 +2,10 @@
 
 <a href="http://joss.theoj.org/papers/10.21105/joss.00250"><img src="http://joss.theoj.org/papers/10.21105/joss.00250/status.svg"></a>
 
+[![Build (python)](https://github.com/gauteh/ibcao_py/workflows/Python/badge.svg)](https://github.com/gauteh/ibcao_py/actions?query=branch%3Amaster)
+[![PyPI version](https://badge.fury.io/py/ibcao_py.svg)](https://badge.fury.io/py/ibcao_py)
+[![Anaconda-Server Badge](https://anaconda.org/conda-forge/ibcao_py/badges/version.svg)](https://anaconda.org/conda-forge/ibcao_py)
+
 Class which sets up the [IBCAO](http://www.ngdc.noaa.gov/mgg/bathymetry/arctic/arctic.html) (projection and loads file) for use with [Matplotlib](http://matplotlib.org/) and [Cartopy](http://scitools.org.uk/cartopy/).
 
 The [IBCAO](http://www.ngdc.noaa.gov/mgg/bathymetry/arctic/arctic.html) is
