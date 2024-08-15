@@ -1,6 +1,6 @@
 name: ibcao
 channels:
-  - scitools
+  - conda-forge
 dependencies:
   - numpy
   - scipy
@@ -8,4 +8,8 @@ dependencies:
   - matplotlib
   - pyproj
   - cartopy
+  - pytest
+  - pytest-benchmark
+  - pytest-mpl
+  - pytest-cov
 
